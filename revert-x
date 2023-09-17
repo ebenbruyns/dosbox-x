@@ -1,3 +1,0 @@
-#!/bin/bash
-diff -w $1 ~/daum/dosbox-x/$1 | patch -sp1 ~/daum/dosbox-x/$1
-

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2013  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -93,17 +93,17 @@ static void dyn_string(STRING_OP op) {
 			gen_lea(DREG(EA),si_base,DREG(ESI),0,0);
 		}
 		switch (op&3) {
-		case 0:dyn_read_byte(DREG(EA),tmp_reg,false);break;
-		case 1:dyn_read_word(DREG(EA),tmp_reg,false);break;
-		case 2:dyn_read_word(DREG(EA),tmp_reg,true);break;
+			case 0:dyn_read_byte(DREG(EA),tmp_reg,false);break;
+			case 1:dyn_read_word(DREG(EA),tmp_reg,false);break;
+			case 2:dyn_read_word(DREG(EA),tmp_reg,true);break;
 		}
 		switch (op) {
-		case STR_OUTSB:
-			gen_call_function((void*)&IO_WriteB,"%Id%Dl",DREG(EDX),tmp_reg);break;
-		case STR_OUTSW:
-			gen_call_function((void*)&IO_WriteW,"%Id%Dw",DREG(EDX),tmp_reg);break;
-		case STR_OUTSD:
-			gen_call_function((void*)&IO_WriteD,"%Id%Dd",DREG(EDX),tmp_reg);break;
+			case STR_OUTSB:
+				gen_call_function((void*)&IO_WriteB,"%Id%Dl",DREG(EDX),tmp_reg);break;
+			case STR_OUTSW:
+				gen_call_function((void*)&IO_WriteW,"%Id%Dw",DREG(EDX),tmp_reg);break;
+			case STR_OUTSD:
+				gen_call_function((void*)&IO_WriteD,"%Id%Dd",DREG(EDX),tmp_reg);break;
 			default:
 				break;
 		}

@@ -382,6 +382,7 @@ public:
 			WriteOut("Video refresh rate locked to %.3ffps\n",vga_force_refresh_rate);
 		else
 			WriteOut("Video refresh rate unlocked\n");
+
 	}
 };
 

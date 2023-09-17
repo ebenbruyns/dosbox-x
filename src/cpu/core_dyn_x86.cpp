@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2013  The DOSBox Team
+ *  Copyright (C) 2002-2015  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -263,9 +263,9 @@ Bits CPU_Core_Dyn_X86_Run(void) {
 restart_core:
 	PhysPt ip_point=SegPhys(cs)+reg_eip;
 #if C_DEBUG
-	#if C_HEAVY_DEBUG
+#if C_HEAVY_DEBUG
 		if (DEBUG_HeavyIsBreakpoint()) return debugCallback;
-	#endif
+#endif
 #endif
 	CodePageHandler * chandler=0;
 	if (GCC_UNLIKELY(MakeCodePage(ip_point,chandler))) {

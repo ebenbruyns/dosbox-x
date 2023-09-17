@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2013  The DOSBox Team
+ *  Copyright (C) 2002-2015  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -176,7 +176,7 @@ static void counter_latch(Bitu counter) {
 			p->read_latch = p->cntr - (Bit16u)f;
 		}
 		else {
-			/* Counter keeps on counting after passing terminal count */
+		/* Counter keeps on counting after passing terminal count */
 			if(p->bcd) {
 				index = fmod(index,(1000.0/PIT_TICK_RATE)*10000.0);
 				p->read_latch = (Bit16u)(((unsigned long)(p->cntr-index*(PIT_TICK_RATE/1000.0))) % 10000UL);

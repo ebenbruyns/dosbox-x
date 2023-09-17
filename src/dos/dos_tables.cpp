@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2013  The DOSBox Team
+ *  Copyright (C) 2002-2015  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -174,7 +174,7 @@ void DOS_SetupTables(void) {
 	/* Allocate DCBS DOUBLE BYTE CHARACTER SET LEAD-BYTE TABLE */
 	if (enable_dbcs_tables) {
 		dos.tables.dbcs=RealMake(DOS_GetMemory(12,"dos.tables.dbcs"),0);
-		mem_writed(Real2Phys(dos.tables.dbcs),0); //empty table
+	mem_writed(Real2Phys(dos.tables.dbcs),0); //empty table
 	}
 	else {
 		dos.tables.dbcs=0;
@@ -182,29 +182,29 @@ void DOS_SetupTables(void) {
 	/* FILENAME CHARACTER TABLE */
 	if (enable_filenamechar) {
 		dos.tables.filenamechar=RealMake(DOS_GetMemory(2,"dos.tables.filenamechar"),0);
-		mem_writew(Real2Phys(dos.tables.filenamechar)+0x00,0x16);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x02,0x01);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x03,0x00);	// allowed chars from
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x04,0xff);	// ...to
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x05,0x00);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x06,0x00);	// excluded chars from
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x07,0x20);	// ...to
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x08,0x02);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x09,0x0e);	// number of illegal separators
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x0a,0x2e);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x0b,0x22);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x0c,0x2f);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x0d,0x5c);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x0e,0x5b);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x0f,0x5d);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x10,0x3a);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x11,0x7c);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x12,0x3c);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x13,0x3e);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x14,0x2b);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x15,0x3d);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x16,0x3b);
-		mem_writeb(Real2Phys(dos.tables.filenamechar)+0x17,0x2c);
+	mem_writew(Real2Phys(dos.tables.filenamechar)+0x00,0x16);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x02,0x01);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x03,0x00);	// allowed chars from
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x04,0xff);	// ...to
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x05,0x00);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x06,0x00);	// excluded chars from
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x07,0x20);	// ...to
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x08,0x02);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x09,0x0e);	// number of illegal separators
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x0a,0x2e);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x0b,0x22);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x0c,0x2f);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x0d,0x5c);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x0e,0x5b);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x0f,0x5d);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x10,0x3a);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x11,0x7c);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x12,0x3c);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x13,0x3e);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x14,0x2b);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x15,0x3d);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x16,0x3b);
+	mem_writeb(Real2Phys(dos.tables.filenamechar)+0x17,0x2c);
 	}
 	else {
 		dos.tables.filenamechar = 0;
@@ -213,11 +213,11 @@ void DOS_SetupTables(void) {
 	// 256 bytes for col table, 128 for upcase, 4 for number of entries
 	if (enable_collating_uppercase) {
 		dos.tables.collatingseq=RealMake(DOS_GetMemory(25,"dos.tables.collatingseq"),0);
-		mem_writew(Real2Phys(dos.tables.collatingseq),0x100);
-		for (i=0; i<256; i++) mem_writeb(Real2Phys(dos.tables.collatingseq)+i+2,i);
-		dos.tables.upcase=dos.tables.collatingseq+258;
-		mem_writew(Real2Phys(dos.tables.upcase),0x80);
-		for (i=0; i<128; i++) mem_writeb(Real2Phys(dos.tables.upcase)+i+2,0x80+i);
+	mem_writew(Real2Phys(dos.tables.collatingseq),0x100);
+	for (i=0; i<256; i++) mem_writeb(Real2Phys(dos.tables.collatingseq)+i+2,i);
+	dos.tables.upcase=dos.tables.collatingseq+258;
+	mem_writew(Real2Phys(dos.tables.upcase),0x80);
+	for (i=0; i<128; i++) mem_writeb(Real2Phys(dos.tables.upcase)+i+2,0x80+i);
 	}
 	else {
 		dos.tables.collatingseq = 0;

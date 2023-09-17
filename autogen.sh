@@ -4,7 +4,6 @@ echo "Generating build information using aclocal, autoheader, automake and autoc
 echo "This may take a while ..."
 
 # Regenerate configuration files.
-
 aclocal
 autoheader
 automake --include-deps --add-missing --copy 

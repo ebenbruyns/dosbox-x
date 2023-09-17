@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2013  The DOSBox Team
+ *  Copyright (C) 2002-2015  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -2277,160 +2277,160 @@ static Bitu INT15_Handler(void) {
 		reg_ah=0;
 		break;
 	case 0xc2:	/* BIOS PS2 Pointing Device Support */
-			/* TODO: Our reliance on AUX emulation means that at some point, AUX emulation
-			 *       must always be enabled if BIOS PS/2 emulation is enabled. Future planned change:
-			 *
-			 *       If biosps2=true and aux=true, carry on what we're already doing now: emulate INT 15h by
-			 *         directly writing to the AUX port of the keyboard controller.
-			 *
-			 *       If biosps2=false, the aux= setting enables/disables AUX emulation as it already does now.
-			 *         biosps2=false implies that we're emulating a keyboard controller with AUX but no BIOS
-			 *         support for it (however rare that might be). This gives the user of DOSBox-X the means
-			 *         to test that scenario especially in case he/she is developing a homebrew OS and needs
-			 *         to ensure their code can handle cases like that gracefully.
-			 *
-			 *       If biosps2=true and aux=false, AUX emulation is enabled anyway, but the keyboard emulation
-			 *         must act as if the AUX port is not there so the guest OS cannot control it. Again, not
-			 *         likely on real hardware, but a useful test case for homebrew OS developers.
-			 *
-			 *       If you the user set aux=false, then you obviously want to test a system configuration
-			 *       where the keyboard controller has no AUX port. If you set biosps2=true, then you want to
-			 *       test an OS that uses BIOS functions to setup the "pointing device" but you do not want the
-			 *       guest OS to talk directly to the AUX port on the keyboard controller.
-			 *
-			 *       Logically that's not likely to happen on real hardware, but we like giving the end-user
-			 *       options to play with, so instead, if aux=false and biosps2=true, DOSBox-X should print
-			 *       a warning stating that INT 15h mouse emulation with a PS/2 port is nonstandard and may
-			 *       cause problems with OSes that need to talk directly to hardware.
-			 *
-			 *       It is noteworthy that PS/2 mouse support in MS-DOS mouse drivers as well as Windows 3.x,
-			 *       Windows 95, and Windows 98, is carried out NOT by talking directly to the AUX port but
-			 *       instead by relying on the BIOS INT 15h functions here to do the dirty work. For those
-			 *       scenarios, biosps2=true and aux=false is perfectly safe and does not cause issues.
-			 *
-			 *       OSes that communicate directly with the AUX port however (Linux, Windows NT) will not work
-			 *       unless aux=true. */
+		/* TODO: Our reliance on AUX emulation means that at some point, AUX emulation
+		 *       must always be enabled if BIOS PS/2 emulation is enabled. Future planned change:
+		 *
+		 *       If biosps2=true and aux=true, carry on what we're already doing now: emulate INT 15h by
+		 *         directly writing to the AUX port of the keyboard controller.
+		 *
+		 *       If biosps2=false, the aux= setting enables/disables AUX emulation as it already does now.
+		 *         biosps2=false implies that we're emulating a keyboard controller with AUX but no BIOS
+		 *         support for it (however rare that might be). This gives the user of DOSBox-X the means
+		 *         to test that scenario especially in case he/she is developing a homebrew OS and needs
+		 *         to ensure their code can handle cases like that gracefully.
+		 *
+		 *       If biosps2=true and aux=false, AUX emulation is enabled anyway, but the keyboard emulation
+		 *         must act as if the AUX port is not there so the guest OS cannot control it. Again, not
+		 *         likely on real hardware, but a useful test case for homebrew OS developers.
+		 *
+		 *       If you the user set aux=false, then you obviously want to test a system configuration
+		 *       where the keyboard controller has no AUX port. If you set biosps2=true, then you want to
+		 *       test an OS that uses BIOS functions to setup the "pointing device" but you do not want the
+		 *       guest OS to talk directly to the AUX port on the keyboard controller.
+		 *
+		 *       Logically that's not likely to happen on real hardware, but we like giving the end-user
+		 *       options to play with, so instead, if aux=false and biosps2=true, DOSBox-X should print
+		 *       a warning stating that INT 15h mouse emulation with a PS/2 port is nonstandard and may
+		 *       cause problems with OSes that need to talk directly to hardware.
+		 *
+		 *       It is noteworthy that PS/2 mouse support in MS-DOS mouse drivers as well as Windows 3.x,
+		 *       Windows 95, and Windows 98, is carried out NOT by talking directly to the AUX port but
+		 *       instead by relying on the BIOS INT 15h functions here to do the dirty work. For those
+		 *       scenarios, biosps2=true and aux=false is perfectly safe and does not cause issues.
+		 *
+		 *       OSes that communicate directly with the AUX port however (Linux, Windows NT) will not work
+		 *       unless aux=true. */
 		if (en_bios_ps2mouse) {
 //			LOG_MSG("INT 15h AX=%04x BX=%04x\n",reg_ax,reg_bx);
-			switch (reg_al) {
-				case 0x00:		// enable/disable
-					if (reg_bh==0) {	// disable
-						KEYBOARD_AUX_Write(0xF5);
-						Mouse_SetPS2State(false);
-						reg_ah=0;
-						CALLBACK_SCF(false);
-						KEYBOARD_ClrBuffer();
-					} else if (reg_bh==0x01) {	//enable
-						if (!Mouse_SetPS2State(true)) {
-							reg_ah=5;
-							CALLBACK_SCF(true);
-							break;
-						}
-						KEYBOARD_AUX_Write(0xF4);
-						KEYBOARD_ClrBuffer();
-						reg_ah=0;
-						CALLBACK_SCF(false);
-					} else {
-						CALLBACK_SCF(true);
-						reg_ah=1;
-					}
-					break;
-				case 0x01:		// reset
-					KEYBOARD_AUX_Write(0xFF);
-					Mouse_SetPS2State(false);
-					KEYBOARD_ClrBuffer();
-					reg_bx=0x00aa;	// mouse
-					// fall through
-				case 0x05:		// initialize
-					if (reg_bh >= 3 && reg_bh <= 4) {
-						/* TODO: BIOSes remember this value as the number of bytes to store before
-						 *       calling the device callback. Setting this value to "1" is perfectly
-						 *       valid if you want a byte-stream like mode (at the cost of one
-						 *       interrupt per byte!). Most OSes will call this with BH=3 for standard
-						 *       PS/2 mouse protocol. You can also call this with BH=4 for Intellimouse
-						 *       protocol support, though testing (so far with VirtualBox) shows the
-						 *       device callback still only gets the first three bytes on the stack.
-						 *       Contrary to what you might think, the BIOS does not interpret the
-						 *       bytes at all.
-						 *
-						 *       The source code of CuteMouse 1.9 seems to suggest some BIOSes take
-						 *       pains to repack the 4th byte in the upper 8 bits of one of the WORDs
-						 *       on the stack in Intellimouse mode at the cost of shifting the W and X
-						 *       fields around. I can't seem to find any source on who does that or
-						 *       if it's even true, so I disregard the example at this time.
-						 *
-						 *       Anyway, you need to store off this value somewhere and make use of
-						 *       it in src/ints/mouse.cpp device callback emulation to reframe the
-						 *       PS/2 mouse bytes coming from AUX (if aux=true) or emulate the
-						 *       re-framing if aux=false to emulate this protocol fully. */
-						LOG_MSG("INT 15h mouse initialized to %u-byte protocol\n",reg_bh);
-						KEYBOARD_AUX_Write(0xF6); /* set defaults */
-						Mouse_SetPS2State(false);
-						KEYBOARD_ClrBuffer();
-						CALLBACK_SCF(false);
-						reg_ah=0;
-					}
-					else {
-						CALLBACK_SCF(false);
-						reg_ah=0x02; /* invalid input */
-					}
-					break;
-				case 0x02: {		// set sampling rate
-					static const unsigned char tbl[7] = {10,20,40,60,80,100,200};
-					KEYBOARD_AUX_Write(0xF3);
-					if (reg_bl > 6) reg_bl = 6;
-					KEYBOARD_AUX_Write(tbl[reg_bh]);
-					KEYBOARD_ClrBuffer();
-					CALLBACK_SCF(false);
-					reg_ah=0;
-					} break;
-				case 0x03:		// set resolution
-					KEYBOARD_AUX_Write(0xE8);
-					KEYBOARD_AUX_Write(reg_bh&3);
-					KEYBOARD_ClrBuffer();
-					CALLBACK_SCF(false);
-					reg_ah=0;
-					break;
-				case 0x04:		// get type
-					reg_bh=KEYBOARD_AUX_GetType();	// ID
-					LOG_MSG("INT 15h reporting mouse device ID 0x%02x\n",reg_bh);
-					KEYBOARD_ClrBuffer();
-					CALLBACK_SCF(false);
-					reg_ah=0;
-					break;
-				case 0x06:		// extended commands
-					if (reg_bh == 0x00) {
-						/* Read device status and info.
-						 * Windows 9x does not appear to use this, but Windows NT 3.1 does (prior to entering
-						 * full 32-bit protected mode) */
-						CALLBACK_SCF(false);
-						reg_bx=KEYBOARD_AUX_DevStatus();
-						reg_cx=KEYBOARD_AUX_Resolution();
-						reg_dx=KEYBOARD_AUX_SampleRate();
-						KEYBOARD_ClrBuffer();
-						reg_ah=0;
-					}
-					else if ((reg_bh==0x01) || (reg_bh==0x02)) { /* set scaling */
-						KEYBOARD_AUX_Write(0xE6+reg_bh-1); /* 0xE6 1:1   or 0xE7 2:1 */
-						KEYBOARD_ClrBuffer();
-						CALLBACK_SCF(false); 
-						reg_ah=0;
-					} else {
-						CALLBACK_SCF(true);
-						reg_ah=1;
-					}
-					break;
-				case 0x07:		// set callback
-					Mouse_ChangePS2Callback(SegValue(es),reg_bx);
-					CALLBACK_SCF(false);
-					reg_ah=0;
-					break;
-				default:
-					LOG_MSG("INT 15h unknown mouse call AX=%04x\n",reg_ax);
+		switch (reg_al) {
+		case 0x00:		// enable/disable
+			if (reg_bh==0) {	// disable
+				KEYBOARD_AUX_Write(0xF5);
+				Mouse_SetPS2State(false);
+				reg_ah=0;
+				CALLBACK_SCF(false);
+				KEYBOARD_ClrBuffer();
+			} else if (reg_bh==0x01) {	//enable
+				if (!Mouse_SetPS2State(true)) {
+					reg_ah=5;
 					CALLBACK_SCF(true);
-					reg_ah=1;
 					break;
+				}
+				KEYBOARD_AUX_Write(0xF4);
+				KEYBOARD_ClrBuffer();
+				reg_ah=0;
+				CALLBACK_SCF(false);
+			} else {
+				CALLBACK_SCF(true);
+				reg_ah=1;
 			}
+			break;
+		case 0x01:		// reset
+			KEYBOARD_AUX_Write(0xFF);
+			Mouse_SetPS2State(false);
+			KEYBOARD_ClrBuffer();
+			reg_bx=0x00aa;	// mouse
+			// fall through
+		case 0x05:		// initialize
+			if (reg_bh >= 3 && reg_bh <= 4) {
+				/* TODO: BIOSes remember this value as the number of bytes to store before
+				 *       calling the device callback. Setting this value to "1" is perfectly
+				 *       valid if you want a byte-stream like mode (at the cost of one
+				 *       interrupt per byte!). Most OSes will call this with BH=3 for standard
+				 *       PS/2 mouse protocol. You can also call this with BH=4 for Intellimouse
+				 *       protocol support, though testing (so far with VirtualBox) shows the
+				 *       device callback still only gets the first three bytes on the stack.
+				 *       Contrary to what you might think, the BIOS does not interpret the
+				 *       bytes at all.
+				 *
+				 *       The source code of CuteMouse 1.9 seems to suggest some BIOSes take
+				 *       pains to repack the 4th byte in the upper 8 bits of one of the WORDs
+				 *       on the stack in Intellimouse mode at the cost of shifting the W and X
+				 *       fields around. I can't seem to find any source on who does that or
+				 *       if it's even true, so I disregard the example at this time.
+				 *
+				 *       Anyway, you need to store off this value somewhere and make use of
+				 *       it in src/ints/mouse.cpp device callback emulation to reframe the
+				 *       PS/2 mouse bytes coming from AUX (if aux=true) or emulate the
+				 *       re-framing if aux=false to emulate this protocol fully. */
+				LOG_MSG("INT 15h mouse initialized to %u-byte protocol\n",reg_bh);
+				KEYBOARD_AUX_Write(0xF6); /* set defaults */
+				Mouse_SetPS2State(false);
+				KEYBOARD_ClrBuffer();
+				CALLBACK_SCF(false);
+				reg_ah=0;
+			}
+			else {
+				CALLBACK_SCF(false);
+				reg_ah=0x02; /* invalid input */
+			}
+			break;
+		case 0x02: {		// set sampling rate
+			static const unsigned char tbl[7] = {10,20,40,60,80,100,200};
+			KEYBOARD_AUX_Write(0xF3);
+			if (reg_bl > 6) reg_bl = 6;
+			KEYBOARD_AUX_Write(tbl[reg_bh]);
+			KEYBOARD_ClrBuffer();
+			CALLBACK_SCF(false);
+			reg_ah=0;
+			} break;
+		case 0x03:		// set resolution
+			KEYBOARD_AUX_Write(0xE8);
+			KEYBOARD_AUX_Write(reg_bh&3);
+			KEYBOARD_ClrBuffer();
+			CALLBACK_SCF(false);
+			reg_ah=0;
+			break;
+		case 0x04:		// get type
+			reg_bh=KEYBOARD_AUX_GetType();	// ID
+			LOG_MSG("INT 15h reporting mouse device ID 0x%02x\n",reg_bh);
+			KEYBOARD_ClrBuffer();
+			CALLBACK_SCF(false);
+			reg_ah=0;
+			break;
+		case 0x06:		// extended commands
+			if (reg_bh == 0x00) {
+				/* Read device status and info.
+				 * Windows 9x does not appear to use this, but Windows NT 3.1 does (prior to entering
+				 * full 32-bit protected mode) */
+				CALLBACK_SCF(false);
+				reg_bx=KEYBOARD_AUX_DevStatus();
+				reg_cx=KEYBOARD_AUX_Resolution();
+				reg_dx=KEYBOARD_AUX_SampleRate();
+				KEYBOARD_ClrBuffer();
+				reg_ah=0;
+			}
+			else if ((reg_bh==0x01) || (reg_bh==0x02)) { /* set scaling */
+				KEYBOARD_AUX_Write(0xE6+reg_bh-1); /* 0xE6 1:1   or 0xE7 2:1 */
+				KEYBOARD_ClrBuffer();
+				CALLBACK_SCF(false); 
+				reg_ah=0;
+			} else {
+				CALLBACK_SCF(true);
+				reg_ah=1;
+			}
+			break;
+		case 0x07:		// set callback
+			Mouse_ChangePS2Callback(SegValue(es),reg_bx);
+			CALLBACK_SCF(false);
+			reg_ah=0;
+			break;
+		default:
+			LOG_MSG("INT 15h unknown mouse call AX=%04x\n",reg_ax);
+			CALLBACK_SCF(true);
+			reg_ah=1;
+			break;
+		}
 		}
 		else {
 			reg_ah=0x86;
@@ -2455,256 +2455,256 @@ static Bitu INT15_Handler(void) {
 		switch(reg_al) {
 		case 0x00: // installation check
 			reg_ah = 1;			// APM 1.2	<- TODO: Make dosbox.conf option what version APM interface we emulate
-					reg_al = 2;
-					reg_bx = 0x504d;	// 'PM'
-					reg_cx = (APMBIOS_allow_prot16?0x01:0x00) + (APMBIOS_allow_prot32?0x02:0x00);
-					// 32-bit interface seems to be needed for standby in win95
-					CALLBACK_SCF(false);
-					break;
-				case 0x01: // connect real mode interface
-					if(!APMBIOS_allow_realmode) {
-						LOG_MSG("APM BIOS: OS attemped real-mode connection, which is disabled in your dosbox.conf\n");
-						reg_ah = 0x86;	// APM not present
-						CALLBACK_SCF(true);			
-						break;
-					}
-					if(reg_bx != 0x0) {
-						reg_ah = 0x09;	// unrecognized device ID
-						CALLBACK_SCF(true);			
-						break;
-					}
-					if(!apm_realmode_connected) { // not yet connected
-						LOG_MSG("APM BIOS: Connected to real-mode interface\n");
-						CALLBACK_SCF(false);
-						APMBIOS_connect_mode = APMBIOS_CONNECT_REAL;
-						apm_realmode_connected=true;
-					} else {
-						LOG_MSG("APM BIOS: OS attempted to connect to real-mode interface when already connected\n");
-						reg_ah = APMBIOS_connected_already_err(); // interface connection already in effect
-						CALLBACK_SCF(true);			
-					}
-					break;
-				case 0x02: // connect 16-bit protected mode interface
-					if(!APMBIOS_allow_prot16) {
-						LOG_MSG("APM BIOS: OS attemped 16-bit protected mode connection, which is disabled in your dosbox.conf\n");
-						reg_ah = 0x06;	// not supported
-						CALLBACK_SCF(true);			
-						break;
-					}
-					if(reg_bx != 0x0) {
-						reg_ah = 0x09;	// unrecognized device ID
-						CALLBACK_SCF(true);			
-						break;
-					}
-					if(!apm_realmode_connected) { // not yet connected
-						/* NTS: We use the same callback address for both 16-bit and 32-bit
-						 *      because only the DOS callback and RETF instructions are involved,
-						 *      which can be executed as either 16-bit or 32-bit code without problems. */
-						LOG_MSG("APM BIOS: Connected to 16-bit protected mode interface\n");
-						CALLBACK_SCF(false);
-						reg_ax = INT15_apm_pmentry >> 16;	// AX = 16-bit code segment (real mode base)
-						reg_bx = INT15_apm_pmentry & 0xFFFF;	// BX = offset of entry point
-						reg_cx = INT15_apm_pmentry >> 16;	// CX = 16-bit data segment (NTS: doesn't really matter)
-						reg_si = 0xFFFF;			// SI = code segment length
-						reg_di = 0xFFFF;			// DI = data segment length
-						APMBIOS_connect_mode = APMBIOS_CONNECT_PROT16;
-						apm_realmode_connected=true;
-					} else {
-						LOG_MSG("APM BIOS: OS attempted to connect to 16-bit protected mode interface when already connected\n");
-						reg_ah = APMBIOS_connected_already_err(); // interface connection already in effect
-						CALLBACK_SCF(true);			
-					}
-					break;
-				case 0x03: // connect 32-bit protected mode interface
-					// Note that Windows 98 will NOT talk to the APM BIOS unless the 32-bit protected mode connection is available.
-					// And if you lie about it in function 0x00 and then fail, Windows 98 will fail with a "Windows protection error".
-					if(!APMBIOS_allow_prot32) {
-						LOG_MSG("APM BIOS: OS attemped 32-bit protected mode connection, which is disabled in your dosbox.conf\n");
-						reg_ah = 0x08;	// not supported
-						CALLBACK_SCF(true);			
-						break;
-					}
-					if(reg_bx != 0x0) {
-						reg_ah = 0x09;	// unrecognized device ID
-						CALLBACK_SCF(true);			
-						break;
-					}
-					if(!apm_realmode_connected) { // not yet connected
-						LOG_MSG("APM BIOS: Connected to 32-bit protected mode interface\n");
-						CALLBACK_SCF(false);
-						/* NTS: We use the same callback address for both 16-bit and 32-bit
-						 *      because only the DOS callback and RETF instructions are involved,
-						 *      which can be executed as either 16-bit or 32-bit code without problems. */
-						reg_ax = INT15_apm_pmentry >> 16;	// AX = 32-bit code segment (real mode base)
-						reg_ebx = INT15_apm_pmentry & 0xFFFF;	// EBX = offset of entry point
-						reg_cx = INT15_apm_pmentry >> 16;	// CX = 16-bit code segment (real mode base)
-						reg_dx = INT15_apm_pmentry >> 16;	// DX = data segment (real mode base) (?? what size?)
-						reg_esi = 0xFFFFFFFF;			// ESI = upper word: 16-bit code segment len  lower word: 32-bit code segment length
-						reg_di = 0xFFFF;			// DI = data segment length
-						APMBIOS_connect_mode = APMBIOS_CONNECT_PROT32;
-						apm_realmode_connected=true;
-					} else {
-						LOG_MSG("APM BIOS: OS attempted to connect to 32-bit protected mode interface when already connected\n");
-						reg_ah = APMBIOS_connected_already_err(); // interface connection already in effect
-						CALLBACK_SCF(true);			
-					}
-					break;
-				case 0x04: // DISCONNECT INTERFACE
-					if(reg_bx != 0x0) {
-						reg_ah = 0x09;	// unrecognized device ID
-						CALLBACK_SCF(true);			
-						break;
-					}
-					if(apm_realmode_connected) {
-						LOG_MSG("APM BIOS: OS disconnected\n");
-						CALLBACK_SCF(false);
-						apm_realmode_connected=false;
-					} else {
-						reg_ah = 0x03;	// interface not connected
-						CALLBACK_SCF(true);			
-					}
-					break;
-				case 0x05: // CPU IDLE
-					if(!apm_realmode_connected) {
-						reg_ah = 0x03;
-						CALLBACK_SCF(true);
-						break;
-					}
-
-					// Trigger CPU HLT instruction.
-					// NTS: For whatever weird reason, NOT emulating HLT makes Windows 95
-					//      crashy when the APM driver is active! There's something within
-					//      the Win95 kernel that apparently screws up really badly if
-					//      the APM IDLE call returns immediately. The best case scenario
-					//      seems to be that Win95's APM driver has some sort of timing
-					//      logic to it that if it detects an immediate return, immediately
-					//      shuts down and powers off the machine. Windows 98 also seems
-					//      to require a HLT, and will act erratically without it.
-					//
-					//      Also need to note that the choice of "HLT" is not arbitrary
-					//      at all. The APM BIOS standard mentions CPU IDLE either stopping
-					//      the CPU clock temporarily or issuing HLT as a valid method.
-					//
-					// TODO: Make this a dosbox.conf configuration option: what do we do
-					//       on APM idle calls? Allow selection between "nothing" "hlt"
-					//       and "software delay".
-					if (!(reg_flags&0x200)) {
-						LOG_MSG("APM BIOS warning: CPU IDLE called with IF=0, not HLTing\n");
-					}
-					else if (cpudecoder == &HLT_Decode) { /* do not re-execute HLT, it makes DOSBox hang */
-						LOG_MSG("APM BIOS warning: CPU IDLE HLT within HLT (DOSBox core failure)\n");
-					}
-					else {
-						CPU_HLT(reg_eip);
-					}
-					break;
-				case 0x07:
-					if(reg_bx != 0x1) {
-						reg_ah = 0x09;	// wrong device ID
-						CALLBACK_SCF(true);			
-						break;
-					}
-					if(!apm_realmode_connected) {
-						reg_ah = 0x03;
-						CALLBACK_SCF(true);
-						break;
-					}
-					switch(reg_cx) {
-						case 0x3: // power off
-							throw(0);
-							break;
-						default:
-							reg_ah = 0x0A; // invalid parameter value in CX
-							CALLBACK_SCF(true);
-							break;
-					}
-					break;
-				case 0x08: // ENABLE/DISABLE POWER MANAGEMENT
-					if(reg_bx != 0x0 && reg_bx != 0x1) {
-						reg_ah = 0x09;	// unrecognized device ID
-						CALLBACK_SCF(true);			
-						break;
-					} else if(!apm_realmode_connected) {
-						reg_ah = 0x03;
-						CALLBACK_SCF(true);
-						break;
-					}
-					if(reg_cx==0x0) LOG_MSG("disable APM for device %4x",reg_bx);
-					else if(reg_cx==0x1) LOG_MSG("enable APM for device %4x",reg_bx);
-					else {
-						reg_ah = 0x0A; // invalid parameter value in CX
-						CALLBACK_SCF(true);
-					}
-					break;
-				case 0x0a: // GET POWER STATUS
-					if (!apm_realmode_connected) {
-						reg_ah = 0x03;	// interface not connected
-						CALLBACK_SCF(true);
-						break;
-					}
-					if (reg_bx != 0x0001 && reg_bx != 0x8001) {
-						reg_ah = 0x09;	// unrecognized device ID
-						CALLBACK_SCF(true);			
-						break;
-					}
-					/* FIXME: Allow configuration and shell commands to dictate whether or
-					 *        not we emulate a laptop with a battery */
-					reg_bh = 0x01;		// AC line status (1=on-line)
-					reg_bl = 0xFF;		// Battery status (unknown)
-					reg_ch = 0x80;		// Battery flag (no system battery)
-					reg_cl = 0xFF;		// Remaining battery charge (unknown)
-					reg_dx = 0xFFFF;	// Remaining battery life (unknown)
-					reg_si = 0;		// Number of battery units (if called with reg_bx == 0x8001)
-					CALLBACK_SCF(false);
-					break;
-				case 0x0b: // GET PM EVENT
-					if (!apm_realmode_connected) {
-						reg_ah = 0x03;	// interface not connected
-						CALLBACK_SCF(true);
-						break;
-					}
-					reg_ah = 0x80; // no power management events pending
-					CALLBACK_SCF(true);
-					break;
-				case 0x0e:
-					if(reg_bx != 0x0) {
-						reg_ah = 0x09;	// unrecognized device ID
-						CALLBACK_SCF(true);			
-						break;
-					} else if(!apm_realmode_connected) {
-						reg_ah = 0x03;	// interface not connected
-						CALLBACK_SCF(true);
-						break;
-					}
-					reg_ah = reg_ch; /* we are called with desired version in CH,CL, return actual version in AH,AL */
-					reg_al = reg_cl;
-					if(reg_ah != 1) reg_ah = 1;	/* major version must be 1 */
-					if(reg_al > 2) reg_al = 2;	/* minor version must be 0, 1, or 2 */
-					CALLBACK_SCF(false);
-					break;
-				case 0x0f:
-					if(reg_bx != 0x0 && reg_bx != 0x1) {
-						reg_ah = 0x09;	// unrecognized device ID
-						CALLBACK_SCF(true);			
-						break;
-					} else if(!apm_realmode_connected) {
-						reg_ah = 0x03;
-						CALLBACK_SCF(true);
-						break;
-					}
-					if(reg_cx==0x0) LOG_MSG("disengage APM for device %4x",reg_bx);
-					else if(reg_cx==0x1) LOG_MSG("engage APM for device %4x",reg_bx);
-					else {
-						reg_ah = 0x0A; // invalid parameter value in CX
-						CALLBACK_SCF(true);
-					}
-					break;
-				default:
-					LOG_MSG("Unknown APM BIOS call AX=%04x\n",reg_ax);
-					reg_ah = 0x0C; // function not supported
-					CALLBACK_SCF(false);
-					break;
+			reg_al = 2;
+			reg_bx = 0x504d;	// 'PM'
+			reg_cx = (APMBIOS_allow_prot16?0x01:0x00) + (APMBIOS_allow_prot32?0x02:0x00); 
+			// 32-bit interface seems to be needed for standby in win95
+			CALLBACK_SCF(false);
+			break;
+		case 0x01: // connect real mode interface
+			if(!APMBIOS_allow_realmode) {
+				LOG_MSG("APM BIOS: OS attemped real-mode connection, which is disabled in your dosbox.conf\n");
+				reg_ah = 0x86;	// APM not present
+				CALLBACK_SCF(true);			
+				break;
 			}
+			if(reg_bx != 0x0) {
+				reg_ah = 0x09;	// unrecognized device ID
+				CALLBACK_SCF(true);			
+				break;
+			}
+			if(!apm_realmode_connected) { // not yet connected
+				LOG_MSG("APM BIOS: Connected to real-mode interface\n");
+				CALLBACK_SCF(false);
+				APMBIOS_connect_mode = APMBIOS_CONNECT_REAL;
+				apm_realmode_connected=true;
+			} else {
+				LOG_MSG("APM BIOS: OS attempted to connect to real-mode interface when already connected\n");
+				reg_ah = APMBIOS_connected_already_err(); // interface connection already in effect
+				CALLBACK_SCF(true);			
+			}
+			break;
+		case 0x02: // connect 16-bit protected mode interface
+			if(!APMBIOS_allow_prot16) {
+				LOG_MSG("APM BIOS: OS attemped 16-bit protected mode connection, which is disabled in your dosbox.conf\n");
+				reg_ah = 0x06;	// not supported
+				CALLBACK_SCF(true);			
+				break;
+			}
+			if(reg_bx != 0x0) {
+				reg_ah = 0x09;	// unrecognized device ID
+				CALLBACK_SCF(true);			
+				break;
+			}
+			if(!apm_realmode_connected) { // not yet connected
+				/* NTS: We use the same callback address for both 16-bit and 32-bit
+				 *      because only the DOS callback and RETF instructions are involved,
+				 *      which can be executed as either 16-bit or 32-bit code without problems. */
+				LOG_MSG("APM BIOS: Connected to 16-bit protected mode interface\n");
+				CALLBACK_SCF(false);
+				reg_ax = INT15_apm_pmentry >> 16;	// AX = 16-bit code segment (real mode base)
+				reg_bx = INT15_apm_pmentry & 0xFFFF;	// BX = offset of entry point
+				reg_cx = INT15_apm_pmentry >> 16;	// CX = 16-bit data segment (NTS: doesn't really matter)
+				reg_si = 0xFFFF;			// SI = code segment length
+				reg_di = 0xFFFF;			// DI = data segment length
+				APMBIOS_connect_mode = APMBIOS_CONNECT_PROT16;
+				apm_realmode_connected=true;
+			} else {
+				LOG_MSG("APM BIOS: OS attempted to connect to 16-bit protected mode interface when already connected\n");
+				reg_ah = APMBIOS_connected_already_err(); // interface connection already in effect
+				CALLBACK_SCF(true);			
+			}
+			break;
+		case 0x03: // connect 32-bit protected mode interface
+			// Note that Windows 98 will NOT talk to the APM BIOS unless the 32-bit protected mode connection is available.
+			// And if you lie about it in function 0x00 and then fail, Windows 98 will fail with a "Windows protection error".
+			if(!APMBIOS_allow_prot32) {
+				LOG_MSG("APM BIOS: OS attemped 32-bit protected mode connection, which is disabled in your dosbox.conf\n");
+				reg_ah = 0x08;	// not supported
+				CALLBACK_SCF(true);			
+				break;
+			}
+			if(reg_bx != 0x0) {
+				reg_ah = 0x09;	// unrecognized device ID
+				CALLBACK_SCF(true);			
+				break;
+			}
+			if(!apm_realmode_connected) { // not yet connected
+				LOG_MSG("APM BIOS: Connected to 32-bit protected mode interface\n");
+				CALLBACK_SCF(false);
+				/* NTS: We use the same callback address for both 16-bit and 32-bit
+				 *      because only the DOS callback and RETF instructions are involved,
+				 *      which can be executed as either 16-bit or 32-bit code without problems. */
+				reg_ax = INT15_apm_pmentry >> 16;	// AX = 32-bit code segment (real mode base)
+				reg_ebx = INT15_apm_pmentry & 0xFFFF;	// EBX = offset of entry point
+				reg_cx = INT15_apm_pmentry >> 16;	// CX = 16-bit code segment (real mode base)
+				reg_dx = INT15_apm_pmentry >> 16;	// DX = data segment (real mode base) (?? what size?)
+				reg_esi = 0xFFFFFFFF;			// ESI = upper word: 16-bit code segment len  lower word: 32-bit code segment length
+				reg_di = 0xFFFF;			// DI = data segment length
+				APMBIOS_connect_mode = APMBIOS_CONNECT_PROT32;
+				apm_realmode_connected=true;
+			} else {
+				LOG_MSG("APM BIOS: OS attempted to connect to 32-bit protected mode interface when already connected\n");
+				reg_ah = APMBIOS_connected_already_err(); // interface connection already in effect
+				CALLBACK_SCF(true);			
+			}
+			break;
+		case 0x04: // DISCONNECT INTERFACE
+			if(reg_bx != 0x0) {
+				reg_ah = 0x09;	// unrecognized device ID
+				CALLBACK_SCF(true);			
+				break;
+			}
+			if(apm_realmode_connected) {
+				LOG_MSG("APM BIOS: OS disconnected\n");
+				CALLBACK_SCF(false);
+				apm_realmode_connected=false;
+			} else {
+				reg_ah = 0x03;	// interface not connected
+				CALLBACK_SCF(true);			
+			}
+			break;
+		case 0x05: // CPU IDLE
+			if(!apm_realmode_connected) {
+				reg_ah = 0x03;
+				CALLBACK_SCF(true);
+				break;
+			}
+
+			// Trigger CPU HLT instruction.
+			// NTS: For whatever weird reason, NOT emulating HLT makes Windows 95
+			//      crashy when the APM driver is active! There's something within
+			//      the Win95 kernel that apparently screws up really badly if
+			//      the APM IDLE call returns immediately. The best case scenario
+			//      seems to be that Win95's APM driver has some sort of timing
+			//      logic to it that if it detects an immediate return, immediately
+			//      shuts down and powers off the machine. Windows 98 also seems
+			//      to require a HLT, and will act erratically without it.
+			//
+			//      Also need to note that the choice of "HLT" is not arbitrary
+			//      at all. The APM BIOS standard mentions CPU IDLE either stopping
+			//      the CPU clock temporarily or issuing HLT as a valid method.
+			//
+			// TODO: Make this a dosbox.conf configuration option: what do we do
+			//       on APM idle calls? Allow selection between "nothing" "hlt"
+			//       and "software delay".
+			if (!(reg_flags&0x200)) {
+				LOG_MSG("APM BIOS warning: CPU IDLE called with IF=0, not HLTing\n");
+			}
+			else if (cpudecoder == &HLT_Decode) { /* do not re-execute HLT, it makes DOSBox hang */
+				LOG_MSG("APM BIOS warning: CPU IDLE HLT within HLT (DOSBox core failure)\n");
+			}
+			else {
+				CPU_HLT(reg_eip);
+			}
+			break;
+		case 0x07:
+			if(reg_bx != 0x1) {
+				reg_ah = 0x09;	// wrong device ID
+				CALLBACK_SCF(true);			
+				break;
+			}
+			if(!apm_realmode_connected) {
+				reg_ah = 0x03;
+				CALLBACK_SCF(true);
+				break;
+			}
+			switch(reg_cx) {
+			case 0x3: // power off
+				throw(0);
+				break;
+			default:
+				reg_ah = 0x0A; // invalid parameter value in CX
+				CALLBACK_SCF(true);
+				break;
+			}
+			break;
+		case 0x08: // ENABLE/DISABLE POWER MANAGEMENT
+			if(reg_bx != 0x0 && reg_bx != 0x1) {
+				reg_ah = 0x09;	// unrecognized device ID
+				CALLBACK_SCF(true);			
+				break;
+			} else if(!apm_realmode_connected) {
+				reg_ah = 0x03;
+				CALLBACK_SCF(true);
+				break;
+			}
+			if(reg_cx==0x0) LOG_MSG("disable APM for device %4x",reg_bx);
+			else if(reg_cx==0x1) LOG_MSG("enable APM for device %4x",reg_bx);
+			else {
+				reg_ah = 0x0A; // invalid parameter value in CX
+				CALLBACK_SCF(true);
+			}
+			break;
+		case 0x0a: // GET POWER STATUS
+			if (!apm_realmode_connected) {
+				reg_ah = 0x03;	// interface not connected
+				CALLBACK_SCF(true);
+				break;
+			}
+			if (reg_bx != 0x0001 && reg_bx != 0x8001) {
+				reg_ah = 0x09;	// unrecognized device ID
+				CALLBACK_SCF(true);			
+				break;
+			}
+			/* FIXME: Allow configuration and shell commands to dictate whether or
+			 *        not we emulate a laptop with a battery */
+			reg_bh = 0x01;		// AC line status (1=on-line)
+			reg_bl = 0xFF;		// Battery status (unknown)
+			reg_ch = 0x80;		// Battery flag (no system battery)
+			reg_cl = 0xFF;		// Remaining battery charge (unknown)
+			reg_dx = 0xFFFF;	// Remaining battery life (unknown)
+			reg_si = 0;		// Number of battery units (if called with reg_bx == 0x8001)
+			CALLBACK_SCF(false);
+			break;
+		case 0x0b: // GET PM EVENT
+			if (!apm_realmode_connected) {
+				reg_ah = 0x03;	// interface not connected
+				CALLBACK_SCF(true);
+				break;
+			}
+			reg_ah = 0x80; // no power management events pending
+			CALLBACK_SCF(true);
+			break;
+		case 0x0e:
+			if(reg_bx != 0x0) {
+				reg_ah = 0x09;	// unrecognized device ID
+				CALLBACK_SCF(true);			
+				break;
+			} else if(!apm_realmode_connected) {
+				reg_ah = 0x03;	// interface not connected
+				CALLBACK_SCF(true);
+				break;
+			}
+			reg_ah = reg_ch; /* we are called with desired version in CH,CL, return actual version in AH,AL */
+			reg_al = reg_cl;
+			if(reg_ah != 1) reg_ah = 1;	/* major version must be 1 */
+			if(reg_al > 2) reg_al = 2;	/* minor version must be 0, 1, or 2 */
+			CALLBACK_SCF(false);
+			break;
+		case 0x0f:
+			if(reg_bx != 0x0 && reg_bx != 0x1) {
+				reg_ah = 0x09;	// unrecognized device ID
+				CALLBACK_SCF(true);			
+				break;
+			} else if(!apm_realmode_connected) {
+				reg_ah = 0x03;
+				CALLBACK_SCF(true);
+				break;
+			}
+			if(reg_cx==0x0) LOG_MSG("disengage APM for device %4x",reg_bx);
+			else if(reg_cx==0x1) LOG_MSG("engage APM for device %4x",reg_bx);
+			else {
+				reg_ah = 0x0A; // invalid parameter value in CX
+				CALLBACK_SCF(true);
+			}
+			break;
+		default:
+			LOG_MSG("Unknown APM BIOS call AX=%04x\n",reg_ax);
+			reg_ah = 0x0C; // function not supported
+			CALLBACK_SCF(false);
+			break;
+		}
 		}
 		else {
 			reg_ah=0x86;
@@ -2976,7 +2976,7 @@ public:
 		}
 
 		mem_writew(BIOS_MEMORY_SIZE,t_conv);
-
+		
 		/* INT 13 Bios Disk Support */
 		BIOS_SetupDisks();
 

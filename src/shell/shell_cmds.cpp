@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2013  The DOSBox Team
+ *  Copyright (C) 2002-2015  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -944,7 +944,7 @@ void DOS_Shell::CMD_COPY(char * args) {
 		Bit16u sourceHandle,targetHandle;
 		char nameTarget[DOS_PATHLENGTH];
 		char nameSource[DOS_PATHLENGTH];
-		
+
 		// Cache so we don't have to recalculate
 		size_t pathTargetLen = strlen(pathTarget);
 		
@@ -999,7 +999,7 @@ void DOS_Shell::CMD_COPY(char * args) {
 				if (DOS_OpenFile(nameSource,0,&sourceHandle)) {
 					// Create Target or open it if in concat mode
 					strcpy(nameTarget,pathTarget);
-					
+
 					if (ext) { // substitute parts if necessary
 						if (!ext[-1]) { // substitute extension
 							strcat(nameTarget, name + replacementOffset);

@@ -537,6 +537,11 @@ void POD_Save_Tandy_Sound( std::ostream& stream )
 
 
 	WRITE_POD( &pod_name, pod_name );
+
+	//*******************************************
+	//*******************************************
+	//*******************************************
+
 	Bit8u dma_idx;
 
 
@@ -546,6 +551,10 @@ void POD_Save_Tandy_Sound( std::ostream& stream )
 			if( tandy.dac.dma.chan == GetDMAChannel(lcv) ) { dma_idx = lcv; break; }
 		}
 	}
+
+	// *******************************************
+	// *******************************************
+
 	// - pure data
 	WRITE_POD( &sn, sn );
 
@@ -553,9 +562,14 @@ void POD_Save_Tandy_Sound( std::ostream& stream )
 	// - near-pure data
 	WRITE_POD( &tandy, tandy );
 
+	// *******************************************
+	// *******************************************
+
 	// - reloc ptr
 	WRITE_POD( &dma_idx, dma_idx );
 
+	// *******************************************
+	// *******************************************
 
 	tandy.chan->SaveState(stream);
 	if( tandy.dac.chan ) tandy.dac.chan->SaveState(stream);
@@ -578,6 +592,10 @@ void POD_Load_Tandy_Sound( std::istream& stream )
 		return;
 	}
 
+	//************************************************
+	//************************************************
+	//************************************************
+
 	Bit8u dma_idx;
 	MixerChannel *chan_old, *dac_chan_old;
 
@@ -586,6 +604,8 @@ void POD_Load_Tandy_Sound( std::istream& stream )
 	chan_old = tandy.chan;
 	dac_chan_old = tandy.dac.chan;
 
+	// *******************************************
+	// *******************************************
 
 	// - pure data
 	READ_POD( &sn, sn );
@@ -593,12 +613,20 @@ void POD_Load_Tandy_Sound( std::istream& stream )
 
 	// - near-pure data
 	READ_POD( &tandy, tandy );
+
+	// *******************************************
+	// *******************************************
+
 	// - reloc ptr
 	READ_POD( &dma_idx, dma_idx );
 
 
 	tandy.dac.dma.chan = NULL;
 	if( dma_idx != 0xff ) tandy.dac.dma.chan = GetDMAChannel(dma_idx);
+
+	// *******************************************
+	// *******************************************
+
 	// - restore static ptrs
 	tandy.chan = chan_old;
 	tandy.dac.chan = dac_chan_old;
@@ -607,3 +635,79 @@ void POD_Load_Tandy_Sound( std::istream& stream )
 	tandy.chan->LoadState(stream);
 	if( tandy.dac.chan ) tandy.dac.chan->LoadState(stream);
 }
+
+
+/*
+ykhwong svn-daum 2012-02-20
+
+
+static globals:
+
+
+static struct SN76496 sn;
+	// - pure data
+	int SampleRate;
+	unsigned int UpdateStep;
+	int VolTable[16];
+	int Register[8];
+	int LastRegister;
+	int Volume[4];
+	unsigned int RNG;
+	int NoiseFB;
+	int Period[4];
+	int Count[4];
+	int Output[4];
+
+
+static struct tandy:
+	// - static ptr (constructor) = mono
+	MixerChannel * chan;
+
+	// - pure data
+	bool enabled;
+	Bitu last_write;
+
+	struct {
+		// - static ptr (constructor) = mono
+		MixerChannel * chan;
+
+		// - pure data
+		bool enabled;
+		
+		// - pure data
+		struct {
+			Bitu base;
+			Bit8u irq,dma;
+		} hw;
+
+		// - near-pure data
+		struct {
+			Bitu rate;
+			Bit8u buf[TDAC_DMA_BUFSIZE];
+			Bit8u last_sample;
+
+			// - reloc ptr (!!!)
+			DmaChannel * chan;
+
+			bool transfer_done;
+		} dma;
+
+		// - pure data
+		Bit8u mode,control;
+		Bit16u frequency;
+		Bit8u amplitude;
+		bool irq_activated;
+	} dac;
+
+
+
+
+// - static ptr
+static TANDYSOUND* test;
+
+	// - static data (constructor)
+	IO_WriteHandleObject WriteHandler[4];
+	IO_ReadHandleObject ReadHandler[4];
+	MixerObject MixerChan;
+	MixerObject MixerChanDAC;
+*/

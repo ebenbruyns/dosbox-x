@@ -566,6 +566,9 @@ void DmaChannel::SaveState( std::ostream& stream )
 
 	dma_callback = POD_State_Find_DMA_Callback( (Bit32u) (callback) );
 
+	//******************************************
+	//******************************************
+	//******************************************
 
 	// - pure data
 	WRITE_POD( &pagebase, pagebase );
@@ -583,6 +586,10 @@ void DmaChannel::SaveState( std::ostream& stream )
 	WRITE_POD( &tcount, tcount );
 	WRITE_POD( &request, request );
 
+	//******************************************
+	//******************************************
+	//******************************************
+
 	// - reloc ptr (!!!)
 	WRITE_POD( &dma_callback, dma_callback );
 }
@@ -595,6 +602,9 @@ void DmaChannel::LoadState( std::istream& stream )
 
 	dma_callback = POD_State_Find_DMA_Callback( (Bit32u) (callback) );
 
+	//******************************************
+	//******************************************
+	//******************************************
 
 	// - pure data
 	READ_POD( &pagebase, pagebase );
@@ -611,6 +621,10 @@ void DmaChannel::LoadState( std::istream& stream )
 	READ_POD( &masked, masked );
 	READ_POD( &tcount, tcount );
 	READ_POD( &request, request );
+
+	//********************************
+	//********************************
+	//********************************
 
 	// - reloc func ptr
 	READ_POD( &dma_callback, dma_callback );
@@ -642,6 +656,7 @@ void DmaController::LoadState( std::istream& stream )
 		DmaChannels[lcv]->LoadState(stream);
 	}
 }
+
 
 namespace
 {
@@ -695,3 +710,55 @@ private:
 	}
 } dummy;
 }
+
+
+
+/*
+ykhwong svn-daum 2012-02-20
+
+
+static globals:
+
+
+// - pure data
+static Bit32u dma_wrapping;
+
+
+// - static class 'new' ptr (constructor)
+DmaController *DmaControllers[2];
+
+// - pure data
+-	Bit8u ctrlnum;
+-	bool flipflop;
+
+
+// - static class 'new' ptr (constructor)
+-	DmaChannel *DmaChannels[4];
+
+	// - pure data
+	- Bit32u pagebase;
+	- Bit16u baseaddr;
+	- Bit32u curraddr;
+	- Bit16u basecnt;
+	- Bit16u currcnt;
+	- Bit8u channum;
+	- Bit8u pagenum;
+	- Bit8u DMA16;
+	- bool increment;
+	- bool autoinit;
+	- Bit8u trantype;
+	- bool masked;
+	- bool tcount;
+	- bool request;
+
+	// - reloc func ptr
+	- DMA_CallBack callback;
+
+
+// - static func ptr
+- IO_ReadHandleObject DMA_ReadHandler[0x11];
+- IO_WriteHandleObject DMA_WriteHandler[0x11];
+
+
+Bit32u ems_board_mapping[LINK_START];
+*/

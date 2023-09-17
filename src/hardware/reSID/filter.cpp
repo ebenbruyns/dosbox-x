@@ -367,6 +367,12 @@ void Filter::SaveState( std::ostream& stream )
 void Filter::LoadState( std::istream& stream )
 {
 	unsigned char f0_idx, f0_points_idx;
+
+	//**********************************************
+	//**********************************************
+	//**********************************************
+
+	// - pure data
 	READ_POD( &enabled, enabled );
 
 	READ_POD( &fc, fc );
@@ -390,8 +396,16 @@ void Filter::LoadState( std::istream& stream )
 	READ_POD( &f0_8580, f0_8580 );
 
 	READ_POD( &f0_count, f0_count );
+
+
+
+	// - reloc ptr
 	READ_POD( &f0_idx, f0_idx );
 	READ_POD( &f0_points_idx, f0_points_idx );
+
+	//**********************************************
+	//**********************************************
+	//**********************************************
 
 	switch( f0_idx ) {
 		case 0: f0 = f0_6581; break;
@@ -405,3 +419,45 @@ void Filter::LoadState( std::istream& stream )
 }
 
 
+
+/*
+ykhwong svn-daum 2012-05-21
+
+
+class Filter
+
+	// - pure data
+  bool enabled;
+
+  reg12 fc;
+  reg8 res;
+  reg8 filt;
+  reg8 voice3off;
+  reg8 hp_bp_lp;
+  reg4 vol;
+
+  sound_sample mixer_DC;
+  sound_sample Vhp;
+  sound_sample Vbp;
+  sound_sample Vlp;
+  sound_sample Vnf;
+  sound_sample w0, w0_ceil_1, w0_ceil_dt;
+  sound_sample _1024_div_Q;
+
+  sound_sample f0_6581[2048];
+  sound_sample f0_8580[2048];
+
+
+	// - reloc ptr
+  sound_sample* f0;
+
+
+	// - static data
+  static fc_point f0_points_6581[];
+  static fc_point f0_points_8580[];
+
+
+	// - reloc ptr
+  fc_point* f0_points;
+  int f0_count;
+*/

@@ -1188,3 +1188,25 @@ void DestroyConditionFlags(void) {
 
 #endif
 
+
+
+/*
+ykhwong svn-daum 2012-02-20
+
+
+static globals:
+
+
+struct LazyFlags lflags;
+	// - pure data
+	GenReg32 var1,var2,res;
+		union GenReg32 {
+			Bit32u dword[1];
+			Bit16u word[2];
+			Bit8u byte[4];
+		};
+
+	Bitu type;
+	Bitu prev_type;
+	Bitu oldcf;
+*/

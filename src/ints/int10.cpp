@@ -800,7 +800,14 @@ public:
     SerializeInt10() : SerializeGlobalPOD("Int10")
     {
         registerPOD(int10);
+        //registerPOD(CurMode);
+        //registerPOD(call_10);
+        //registerPOD(warned_ff);
     }
 
+	 //   virtual void setBytes(std::istream& stream)
+    //{
+      //  SerializeGlobalPOD::setBytes(stream);
+		//}
 } dummy;
 }

@@ -1340,6 +1340,11 @@ void DOS_File::SaveState( std::ostream& stream )
 
 	file_namelen = strlen( name )+1;
 	seek_pos = GetSeekPos();
+
+	//******************************************
+	//******************************************
+	//******************************************
+
 	// - pure data
 	WRITE_POD( &file_namelen, file_namelen );
 	WRITE_POD_SIZE( name, file_namelen );
@@ -1354,14 +1359,25 @@ void DOS_File::SaveState( std::ostream& stream )
 	WRITE_POD( &refCtr, refCtr );
 	WRITE_POD( &newtime, newtime );
 	WRITE_POD( &hdrive, hdrive );
+
+	//******************************************
+	//******************************************
+	//******************************************
+
 	// - reloc ptr
 	WRITE_POD( &seek_pos, seek_pos );
 }
+
 
 void DOS_File::LoadState( std::istream& stream )
 {
 	Bit32u file_namelen, seek_pos;
 	char *file_name;
+
+	//******************************************
+	//******************************************
+	//******************************************
+
 	// - pure data
 	READ_POD( &file_namelen, file_namelen );
 	file_name = (char*)alloca( file_namelen * sizeof(char) );
@@ -1377,6 +1393,11 @@ void DOS_File::LoadState( std::istream& stream )
 	READ_POD( &refCtr, refCtr );
 	READ_POD( &newtime, newtime );
 	READ_POD( &hdrive, hdrive );
+
+	//******************************************
+	//******************************************
+	//******************************************
+
 	// - reloc ptr
 	READ_POD( &seek_pos, seek_pos );
 
@@ -1384,13 +1405,22 @@ void DOS_File::LoadState( std::istream& stream )
 	if( open ) Seek( &seek_pos, DOS_SEEK_SET );
 	else Close();
 }
+
+
 void POD_Save_DOS_Files( std::ostream& stream )
 {
+	// 1. Do drives first (directories -> files)
+	// 2. Then files next
+
 	for( int lcv=0; lcv<DOS_DRIVES; lcv++ ) {
 		Bit8u drive_valid;
 
 		drive_valid = 0;
 		if( Drives[lcv] == 0 ) drive_valid = 0xff;
+
+		//**********************************************
+		//**********************************************
+		//**********************************************
 
 		// - reloc ptr
 		WRITE_POD( &drive_valid, drive_valid );
@@ -1422,6 +1452,11 @@ void POD_Save_DOS_Files( std::ostream& stream )
 			WRITE_POD( &Files[lcv]->refCtr, Files[lcv]->refCtr );
 			continue;
 		}
+
+		//**********************************************
+		//**********************************************
+		//**********************************************
+
 		file_namelen = strlen( Files[lcv]->name ) + 1;
 		file_name = (char *) alloca( file_namelen );
 		strcpy( file_name, Files[lcv]->name );
@@ -1489,6 +1524,11 @@ void POD_Load_DOS_Files( std::istream& stream )
 
 		// ignore NULL file
 		if( file_valid == 0xff ) continue;
+
+		//**********************************************
+		//**********************************************
+		//**********************************************
+
 		// - Drives->FileOpen vars (repeat copy)
 		READ_POD( &file_namelen, file_namelen );
 		file_name = (char *) alloca( file_namelen );
@@ -1505,3 +1545,34 @@ void POD_Load_DOS_Files( std::istream& stream )
 	}
 }
 
+
+
+/*
+ykhwong svn-daum 2012-02-20
+
+
+- reloc class 'new' data
+class DOS_File Files
+	// - pure data (NULL warning)
+	char* name;
+
+	// - pure data
+	Bit8u drive;
+	Bit32u flags;
+	bool open;
+
+	Bit16u attr;
+	Bit16u time;
+	Bit16u date;
+	Bits refCtr;
+	bool newtime;
+	Bit8u hdrive;
+
+
+
+- reloc class 'new' data
+class DOS_Drive *Drives[DOS_DRIVES];
+	// - pure data
+	char curdir[DOS_PATHLENGTH];
+	char info[256];
+*/

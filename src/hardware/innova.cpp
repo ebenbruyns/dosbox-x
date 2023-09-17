@@ -136,6 +136,10 @@ void POD_Save_Innova( std::ostream& stream )
 
 	WRITE_POD( &pod_name, pod_name );
 
+	//*******************************************
+	//*******************************************
+	//*******************************************
+
 	// - pure data
 	WRITE_POD( &innova.rate, innova.rate );
 	WRITE_POD( &innova.basePort, innova.basePort );
@@ -144,6 +148,9 @@ void POD_Save_Innova( std::ostream& stream )
 
 	innova.sid->SaveState(stream);
 
+	// *******************************************
+	// *******************************************
+	// *******************************************
 
 	innova.chan->SaveState(stream);
 }
@@ -165,11 +172,19 @@ void POD_Load_Innova( std::istream& stream )
 		return;
 	}
 
+	//************************************************
+	//************************************************
+	//************************************************
+
 	MixerChannel *chan_old;
 
 
 	// - save static ptrs
 	chan_old = innova.chan;
+
+	// *******************************************
+	// *******************************************
+	// *******************************************
 
 	// - pure data
 	READ_POD( &innova.rate, innova.rate );
@@ -179,9 +194,34 @@ void POD_Load_Innova( std::istream& stream )
 
 	innova.sid->LoadState(stream);
 
+	// *******************************************
+	// *******************************************
+	// *******************************************
+
 	// - restore static ptrs
 	innova.chan = chan_old;
 
 
 	innova.chan->LoadState(stream);
 }
+
+
+/*
+ykhwong svn-daum 2012-02-20
+
+
+static globals:
+
+
+static struct innova
+	// - static ptr
+	SID2* sid;
+
+	// - pure data
+	Bitu rate;
+	Bitu basePort;
+	Bitu last_used;
+
+	// - static ptr
+	MixerChannel * chan;
+*/

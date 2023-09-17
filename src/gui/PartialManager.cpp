@@ -288,6 +288,11 @@ void PartialManager::rawVerifyState( char *name, Synth *useSynth )
 
 void PartialManager::saveState( std::ostream &stream )
 {
+	// - static fastptr
+	//Synth *synth; // Only used for sending debug output
+	//Part **parts;
+
+
 	for( int lcv=0; lcv<synth->getPartialLimit(); lcv++ ) {
 		partialTable[lcv]->saveState(stream);
 	}
@@ -306,6 +311,10 @@ void PartialManager::saveState( std::ostream &stream )
 	
 void PartialManager::loadState( std::istream &stream )
 {
+	// - static fastptr
+	//Synth *synth; // Only used for sending debug output
+	//Part **parts;
+
 
 	for( int lcv=0; lcv<synth->getPartialLimit(); lcv++ ) {
 		partialTable[lcv]->loadState(stream);

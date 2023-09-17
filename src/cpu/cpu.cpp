@@ -2951,9 +2951,12 @@ Bitu CPU_ForceV86FakeIO_In(Bitu port,Bitu len) {
 	/* save EAX:EDX and setup DX for IN instruction */
 	old_ax = reg_eax;
 	old_dx = reg_edx;
-
 	reg_edx = port;
 
+	/* DEBUG */
+	//	fprintf(stderr,"CPU virtual 8086 mode: Forcing CPU to execute 'IN%c 0x%04x so OS can trap it. ",suffix[len-1],port);
+	//	fflush(stderr);
+ 
 	/* make the CPU execute that instruction */
 	CALLBACK_RunRealFar(vm86_fake_io_seg,vm86_fake_io_offs[(len==4?2:(len-1))+0]);
 
@@ -2961,6 +2964,7 @@ Bitu CPU_ForceV86FakeIO_In(Bitu port,Bitu len) {
 	ret = reg_eax;
 	if (len == 1) ret &= 0xFF;
 	else if (len == 2) ret &= 0xFFFF;
+	//	fprintf(stderr," => v86 result 0x%02x\n",ret);
 
 	/* then restore EAX:EDX */
 	reg_eax = old_ax;
@@ -2980,6 +2984,8 @@ void CPU_ForceV86FakeIO_Out(Bitu port,Bitu val,Bitu len) {
 	reg_edx = port;
 	reg_eax = val;
 
+	/* DEBUG */
+	//	fprintf(stderr,"CPU virtual 8086 mode: Forcing CPU to execute 'OUT%c 0x%04x,0x%02x so OS can trap it.\n",suffix[len-1],port,val);
 	/* make the CPU execute that instruction */
 	CALLBACK_RunRealFar(vm86_fake_io_seg,vm86_fake_io_offs[(len==4?2:(len-1))+3]);
 
@@ -3046,6 +3052,10 @@ private:
 
 		decoder_idx = CPU_FindDecoderType( cpudecoder );
 
+		//********************************************
+		//********************************************
+		//********************************************
+
 		SerializeGlobalPOD::getBytes(stream);
 
 
@@ -3074,6 +3084,11 @@ private:
 		WRITE_POD( &CPU_IODelayRemoved, CPU_IODelayRemoved );
 		cpu_tss.SaveState(stream);
 		WRITE_POD( &lastint, lastint );
+
+		//********************************************
+		//********************************************
+		//********************************************
+
 		// - reloc func ptr
 		WRITE_POD( &decoder_idx, decoder_idx );
 
@@ -3090,6 +3105,10 @@ private:
 		Bit16u decoder_old;
 
 		decoder_old = CPU_FindDecoderType( cpudecoder );
+
+		//********************************************
+		//********************************************
+		//********************************************
 
 		SerializeGlobalPOD::setBytes(stream);
 
@@ -3119,6 +3138,11 @@ private:
 		READ_POD( &CPU_IODelayRemoved, CPU_IODelayRemoved );
 		cpu_tss.LoadState(stream);
 		READ_POD( &lastint, lastint );
+
+		//********************************************
+		//********************************************
+		//********************************************
+
 		// - reloc func ptr
 		READ_POD( &decoder_idx, decoder_idx );
 
@@ -3127,6 +3151,11 @@ private:
 		POD_Load_CPU_Flags(stream);
 		POD_Load_CPU_MMX(stream);
 		POD_Load_CPU_Paging(stream);
+
+		//*******************************************
+		//*******************************************
+		//*******************************************
+
 		// switch to running core
 		if( decoder_idx < 100 ) {
 			switch( decoder_old ) {
@@ -3181,3 +3210,189 @@ private:
 	}
 } dummy;
 }
+
+
+
+/*
+ykhwong svn-daum 2012-02-20
+
+
+static globals:
+
+
+struct CPU_Regs cpu_regs;
+	// - pure data
+	union GenReg32 regs[8],ip;
+		Bit32u dword[1];
+		Bit16u word[2];
+		Bit8u byte[4];
+
+	Bitu flags;
+
+
+struct CPUBlock cpu;
+	// - pure data
+	Bitu cpl;
+	Bitu mpl;
+	Bitu cr0;
+	bool pmode;
+	
+
+	// - pure class data
+	class GDTDescriptorTable gdt;
+		PhysPt ldt_base;
+		Bitu ldt_limit;
+		Bitu ldt_value;
+	
+
+	// - pure class data
+	class DescriptorTable idt;
+		PhysPt table_base;
+		Bitu table_limit;
+
+
+	// - pure struct data
+	struct {
+		Bitu cr0_and;
+		Bitu cr0_or;
+		Bitu eflags;
+	} masks;
+
+
+	// - pure struct data
+	struct {
+		Bitu mask,notmask;
+		bool big;
+	} stack;
+
+
+	// - pure struct data
+	struct {
+		bool big;
+	} code;
+
+
+	struct {
+		// - pure data
+		Bitu cs,eip;
+
+		// - static reloc func ptr
+		CPU_Decoder * old_decoder;
+	} hlt;
+
+
+	// - pure struct data
+	struct {
+		Bitu which,error;
+	} exception;
+
+
+	// - pure data
+	Bits direction;
+	bool trap_skip;
+	Bit32u drx[8];
+	Bit32u trx[8];
+};
+
+
+// - pure struct data
+struct Segments Segs;
+	Bitu val[8];
+	PhysPt phys[8];
+
+
+// - pure data
+Bit32s CPU_Cycles = 0;
+Bit32s CPU_CycleLeft = 3000;
+
+// - system data
+Bit32s CPU_CycleMax = 3000;
+Bit32s CPU_OldCycleMax = 3000;
+Bit32s CPU_CyclePercUsed = 100;
+Bit32s CPU_CycleLimit = -1;
+Bit32s CPU_CycleUp = 0;
+Bit32s CPU_CycleDown = 0;
+Bit32s CPU_CyclesSet = 3000;
+
+// - pure data
+Bitu CPU_CyclesCur = 0;
+Bit64s CPU_IODelayRemoved = 0;
+
+
+// - system data
+char core_mode[16];
+
+// - system reloc func ptr
+CPU_Decoder * cpudecoder;
+
+// - system data
+bool CPU_CycleAutoAdjust = false;
+bool CPU_SkipCycleAutoAdjust = false;
+Bitu CPU_AutoDetermineMode = 0;
+Bitu CPU_ArchitectureType = CPU_ARCHTYPE_MIXED;
+Bitu CPU_extflags_toggle=0;
+Bitu CPU_PrefetchQueueSize=0;
+
+
+// - pure class data
+class TaskStateSegment cpu_tss
+
+	// - pure class data
+	class TSS_Descriptor desc;
+		union {
+			S_Descriptor seg;
+				Bit32u limit_0_15	:16;
+				Bit32u base_0_15	:16;
+				Bit32u base_16_23	:8;
+				Bit32u type			:5;
+				Bit32u dpl			:2;
+				Bit32u p			:1;
+				Bit32u limit_16_19	:4;
+				Bit32u avl			:1;
+				Bit32u r			:1;
+				Bit32u big			:1;
+				Bit32u g			:1;
+				Bit32u base_24_31	:8;
+
+			G_Descriptor gate;
+				Bit32u offset_0_15	:16;
+				Bit32u selector		:16;
+				Bit32u paramcount	:5;
+				Bit32u reserved		:3;
+				Bit32u type			:5;
+				Bit32u dpl			:2;
+				Bit32u p			:1;
+				Bit32u offset_16_31	:16;
+
+			Bit32u fill[2];
+		} saved;
+
+	// - pure data
+	Bitu selector;
+	PhysPt base;
+	Bitu limit;
+	Bitu is386;
+	bool valid;
+
+
+// - pure data
+Bit8u lastint;
+
+
+// - system data
+static bool printed_cycles_auto_info = false;
+
+
+// - static 'new' ptr
+static CPU * test
+	// - static data
+	static bool inited;
+
+	// - static class data
+	class CPU: public Module_base
+		Section* m_configuration;
+
+
+// - static data
+bool CPU::inited=false;
+*/

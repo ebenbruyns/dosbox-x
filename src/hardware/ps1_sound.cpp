@@ -397,11 +397,20 @@ void POD_Save_PS1_Sound( std::ostream& stream )
 
 	WRITE_POD( &pod_name, pod_name );
 
+	//*******************************************
+	//*******************************************
+	//*******************************************
+
 	// - near-pure struct data
 	WRITE_POD( &ps1, ps1 );
+
+	// *******************************************
+	// *******************************************
+
 	ps1.chanDAC->SaveState(stream);
 	ps1.chanSN->SaveState(stream);
 }
+
 
 void POD_Load_PS1_Sound( std::istream& stream )
 {
@@ -419,13 +428,26 @@ void POD_Load_PS1_Sound( std::istream& stream )
 		return;
 	}
 
+	//************************************************
+	//************************************************
+	//************************************************
+
 	MixerChannel *chanDAC_old, *chanSN_old;
+
 
 	// save old ptrs
 	chanDAC_old = ps1.chanDAC;
 	chanSN_old = ps1.chanSN;
+
+	// *******************************************
+	// *******************************************
+
 	// - near-pure struct data
 	READ_POD( &ps1, ps1 );
+
+	// *******************************************
+	// *******************************************
+
 	// restore old ptrs
 	ps1.chanDAC = chanDAC_old;
 	ps1.chanSN = chanSN_old;
@@ -434,3 +456,56 @@ void POD_Load_PS1_Sound( std::istream& stream )
 	ps1.chanDAC->LoadState(stream);
 	ps1.chanSN->LoadState(stream);
 }
+
+
+/*
+ykhwong svn-daum 2012-02-20
+
+
+static globals:
+
+
+struct PS1AUDIO ps1
+
+	// - static 'new' ptr
+	MixerChannel * chanDAC;
+	MixerChannel * chanSN;
+
+	// - pure data
+	bool enabledDAC;
+	bool enabledSN;
+	Bitu last_writeDAC;
+	Bitu last_writeSN;
+	int SampleRate;
+
+	// - pure struct data
+	struct SN76496 sn;
+
+	// - pure data
+	Bit8u FIFO[FIFOSIZE];
+	Bit16u FIFO_RDIndex;
+	Bit16u FIFO_WRIndex;
+	bool Playing;
+	bool CanTriggerIRQ;
+	Bit32u Rate;
+	Bitu RDIndexHi;
+	Bitu Adder;
+	Bitu Pending;
+
+	// - pure data
+	Bit8u Status;
+	Bit8u Command;
+	Bit8u Data;
+	Bit8u Divisor;
+	Bit8u Unknown;
+
+
+
+// - static 'new' ptr
+static PS1SOUND* test;
+
+	// - static data
+	IO_ReadHandleObject ReadHandler[2];
+	IO_WriteHandleObject WriteHandler[2];
+	MixerObject MixerChanDAC, MixerChanSN;
+*/

@@ -250,6 +250,7 @@ void Voodoo_Output_Enable(bool enabled) {
 	}
 }
 
+
 void Voodoo_Initialize(Bits emulation_type, Bits card_type, bool max_voodoomem) {
 	if ((emulation_type <= 0) || (emulation_type > 2)) return;
 

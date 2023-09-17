@@ -134,7 +134,7 @@ static GUI::ScreenSDL *UI_Startup(GUI::ScreenSDL *screen) {
 	}
 #endif
 	if (w <= 400) {
-		w *=2; h *=2;
+		w *= 2; h *= 2;
 	}
 
 	old_unicode = SDL_EnableUNICODE(1);

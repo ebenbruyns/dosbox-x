@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2013  The DOSBox Team
+ *  Copyright (C) 2002-2015  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -338,7 +338,7 @@ static Bitu Normal_Loop(void) {
 		if (PIC_RunQueue()) {
 			Bit32u ticksNew;
 			ticksNew=GetTicks();
-			if(ticksNew>=Ticks) {
+		    if(ticksNew>=Ticks) {
 				CPU_CyclesCur=(cycle_count-CPU_CyclesCur) >> 9;
 				Ticks=ticksNew + 512;		// next update in 512ms
 				frames*=1.953;			// compensate for 512ms interval
@@ -971,7 +971,7 @@ void DOSBOX_Init(void) {
 			  "  std25                        25MHz\n"
 			  "  <integer or float>           Any integer or floating point value will be used as the clock frequency in Hz\n"
 			  "  <integer/integer ratio>      If a ratio is given (num/den), the ratio will be used as the clock frequency");
-
+	
 	Pint = secprop->Add_int("rom bios allocation max",Property::Changeable::OnlyAtStart,0);
 	Pint->SetMinMax(0,128);
 	Pint->Set_help("Maximum size (top down from 1MB) allowed for ROM BIOS dynamic allocation in KB");
@@ -1370,7 +1370,7 @@ void DOSBOX_Init(void) {
 	Pbool = secprop->Add_bool("isapnpbios",Property::Changeable::WhenIdle,false);
 	Pbool->Set_help("Emulate ISA Plug & Play BIOS. Enable if using DOSBox to run a PnP aware DOS program or if booting Windows 9x.\n"
 			"Do not disable if Windows 9x is configured around PnP devices, you will likely confuse it.");
-
+	
 	Pbool = secprop->Add_bool("realbig16",Property::Changeable::WhenIdle,false);
 	Pbool->Set_help("Allow the B (big) bit in real mode. If set, allow the DOS program to set the B bit,\n"
 		"then jump to realmode with B still set (aka Huge Unreal mode). Needed for Project Angel.");
@@ -1427,8 +1427,8 @@ void DOSBOX_Init(void) {
 	Pbool = secprop->Add_bool("nosound",Property::Changeable::OnlyAtStart,false);
 	Pbool->Set_help("Enable silent mode, sound is still emulated though.");
 
-	Pbool = secprop->Add_bool("swapstereo",Property::Changeable::OnlyAtStart,false); 
-	Pbool->Set_help("Swaps the left and right stereo channels."); 
+   Pbool = secprop->Add_bool("swapstereo",Property::Changeable::OnlyAtStart,false); 
+   Pbool->Set_help("Swaps the left and right stereo channels."); 
 
 	Pint = secprop->Add_int("rate",Property::Changeable::OnlyAtStart,44100);
 	Pint->Set_values(rates);

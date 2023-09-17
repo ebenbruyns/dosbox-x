@@ -202,7 +202,7 @@ PageHandler * MEM_GetPageHandler(Bitu phys_page) {
 	} else if ((phys_page>=memory.lfb.start_page) && (phys_page<memory.lfb.end_page)) {
 		return memory.lfb.handler;
 	} else if ((phys_page>=memory.lfb.start_page+0x01000000/4096) &&
-		(phys_page<memory.lfb.start_page+0x01000000/4096+16)) {
+				(phys_page<memory.lfb.start_page+0x01000000/4096+16)) {
 		return memory.lfb.mmiohandler;
 	} else if (glide.enabled && (phys_page>=(GLIDE_LFB>>12)) && (phys_page<(GLIDE_LFB>>12)+GLIDE_PAGES)) {
 		return (PageHandler*)glide.lfb_pagehandler;
@@ -932,14 +932,14 @@ public:
 		}
 
 		/* Setup the Physical Page Links */
-		Bitu memsize=section->Get_int("memsize");	
+		Bitu memsize=section->Get_int("memsize");
 		Bitu memsizekb=section->Get_int("memsizekb");
 		Bitu address_bits=section->Get_int("memalias");
 
 		dos_conventional_limit = section->Get_int("dos mem limit");
 		adapter_rom_is_ram = section->Get_bool("adapter rom is ram");
 		isa_memory_hole_512kb = section->Get_bool("isa memory hole at 512kb");
-
+	
 		/* FIXME: This belongs elsewhere! */
 		if (VGA_BIOS_Size_override >= 512 && VGA_BIOS_Size_override <= 65536)
 			VGA_BIOS_Size = (VGA_BIOS_Size_override + 0x7FF) & (~0xFFF);

@@ -200,9 +200,9 @@ static void KEYBOARD_SetPort60(Bit16u val) {
 	}
 	else {
 		if (keyb.cb_irq1) {
-			if (machine == MCH_PCJR) CPU_Raise_NMI(); /* NTS: PCjr apparently hooked the keyboard to NMI */
-			else PIC_ActivateIRQ(1);
-		}
+	if (machine == MCH_PCJR) CPU_Raise_NMI(); /* NTS: PCjr apparently hooked the keyboard to NMI */
+	else PIC_ActivateIRQ(1);
+}
 	}
 }
 
@@ -1383,10 +1383,10 @@ static void KEYBOARD_TickHandler(void) {
 			keyb.pending_key = -1;
 		}
 		else if (keyb.repeat.wait) {
-			keyb.repeat.wait--;
-			if (!keyb.repeat.wait) KEYBOARD_AddKey(keyb.repeat.key,true);
-		}
+		keyb.repeat.wait--;
+		if (!keyb.repeat.wait) KEYBOARD_AddKey(keyb.repeat.key,true);
 	}
+}
 }
 
 void KEYBOARD_AddKey(KBD_KEYS keytype,bool pressed) {

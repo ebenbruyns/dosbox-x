@@ -2451,10 +2451,10 @@ static Bitu INT15_Handler(void) {
 		break;
 	case 0x53: // APM BIOS
 		if (APMBIOS) {
-//			LOG_MSG("APM BIOS call AX=%04x BX=0x%04x CX=0x%04x\n",reg_ax,reg_bx,reg_cx);
-			switch(reg_al) {
-				case 0x00: // installation check
-					reg_ah = 1;			// APM 1.2	<- TODO: Make dosbox.conf option what version APM interface we emulate
+//		LOG_MSG("APM BIOS call AX=%04x BX=0x%04x CX=0x%04x\n",reg_ax,reg_bx,reg_cx);
+		switch(reg_al) {
+		case 0x00: // installation check
+			reg_ah = 1;			// APM 1.2	<- TODO: Make dosbox.conf option what version APM interface we emulate
 					reg_al = 2;
 					reg_bx = 0x504d;	// 'PM'
 					reg_cx = (APMBIOS_allow_prot16?0x01:0x00) + (APMBIOS_allow_prot32?0x02:0x00);

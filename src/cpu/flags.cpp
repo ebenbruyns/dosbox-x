@@ -1190,6 +1190,21 @@ void DestroyConditionFlags(void) {
 
 
 
+// save state support
+void POD_Save_CPU_Flags( std::ostream& stream )
+{
+	// - pure data
+	WRITE_POD( &lflags, lflags );
+}
+
+
+void POD_Load_CPU_Flags( std::istream& stream )
+{
+	// - pure data
+	READ_POD( &lflags, lflags );
+}
+
+
 /*
 ykhwong svn-daum 2012-02-20
 

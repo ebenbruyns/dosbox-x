@@ -103,6 +103,20 @@ void setFPU(Bit16u tag) {
 
 
 
+// save state support
+void POD_Save_CPU_MMX( std::ostream& stream )
+{
+	// - pure data
+	WRITE_POD( &reg_mmx, reg_mmx );
+}
+
+
+void POD_Load_CPU_MMX( std::istream& stream )
+{
+	// - pure data
+	READ_POD( &reg_mmx, reg_mmx );
+}
+
 
 /*
 ykhwong svn-daum 2012-02-20

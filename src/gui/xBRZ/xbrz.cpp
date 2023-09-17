@@ -14,7 +14,6 @@
 // ****************************************************************************
 
 #include "xbrz.h"
-#include <cmath>
 #include <cassert>
 #include <algorithm>
 #include <vector>

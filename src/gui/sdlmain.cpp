@@ -1305,12 +1305,12 @@ static void opengl_init(void) {
 	glUnmapBufferARB = (PFNGLUNMAPBUFFERARBPROC)SDL_GL_GetProcAddress("glUnmapBufferARB");
 	const char * gl_ext = (const char *)glGetString (GL_EXTENSIONS);
 	if(gl_ext && *gl_ext){
-		sdl.opengl.packed_pixel=(strstr(gl_ext,"EXT_packed_pixels") != NULL);
-		sdl.opengl.paletted_texture=(strstr(gl_ext,"EXT_paletted_texture") != NULL);
+		sdl.opengl.packed_pixel=(strstr(gl_ext,"EXT_packed_pixels") > 0);
+		sdl.opengl.paletted_texture=(strstr(gl_ext,"EXT_paletted_texture") > 0);
 		if (!control->cmdline->FindExist("-disable_vga_comp"))
 			sdl.opengl.pixel_buffer_object=false;
 		else
-			sdl.opengl.pixel_buffer_object=(strstr(gl_ext,"GL_ARB_pixel_buffer_object") != NULL ) &&
+			sdl.opengl.pixel_buffer_object=(strstr(gl_ext,"GL_ARB_pixel_buffer_object") >0 ) &&
 		    	glGenBuffersARB && glBindBufferARB && glDeleteBuffersARB && glBufferDataARB &&
 		    	glMapBufferARB && glUnmapBufferARB;
   	} else {
@@ -2377,12 +2377,12 @@ static void GUI_StartUp(Section * sec) {
 	glUnmapBufferARB = (PFNGLUNMAPBUFFERARBPROC)SDL_GL_GetProcAddress("glUnmapBufferARB");
 	const char * gl_ext = (const char *)glGetString (GL_EXTENSIONS);
 	if(gl_ext && *gl_ext){
-		sdl.opengl.packed_pixel=(strstr(gl_ext,"EXT_packed_pixels") != NULL);
-		sdl.opengl.paletted_texture=(strstr(gl_ext,"EXT_paletted_texture") != NULL);
+		sdl.opengl.packed_pixel=(strstr(gl_ext,"EXT_packed_pixels") > 0);
+		sdl.opengl.paletted_texture=(strstr(gl_ext,"EXT_paletted_texture") > 0);
 		if (!control->cmdline->FindExist("-disable_vga_comp"))
 			sdl.opengl.pixel_buffer_object=false;
 		else
-			sdl.opengl.pixel_buffer_object=(strstr(gl_ext,"GL_ARB_pixel_buffer_object") != NULL ) &&
+			sdl.opengl.pixel_buffer_object=(strstr(gl_ext,"GL_ARB_pixel_buffer_object") >0 ) &&
 		    	glGenBuffersARB && glBindBufferARB && glDeleteBuffersARB && glBufferDataARB &&
 		    	glMapBufferARB && glUnmapBufferARB;
     	} else {
@@ -2634,7 +2634,7 @@ void OpenFileDialog( char * path_arg ) {
 	OpenFileName.lStructSize = sizeof( OPENFILENAME );
 	OpenFileName.hwndOwner = NULL;
 	if(DOSBox_Kor())
-		OpenFileName.lpstrFilter = "½ÇÇà ÆÄÀÏ(*.com, *.exe, *.bat)\0*.com;*.exe;*.bat\0¸ðµç ÆÄÀÏ(*.*)\0*.*\0";
+		OpenFileName.lpstrFilter = "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.com, *.exe, *.bat)\0*.com;*.exe;*.bat\0ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.*)\0*.*\0";
 	else
 		OpenFileName.lpstrFilter = "Executable files(*.com, *.exe, *.bat)\0*.com;*.exe;*.bat\0All files(*.*)\0*.*\0";
 	OpenFileName.lpstrCustomFilter = NULL;
@@ -2746,7 +2746,7 @@ void Go_Boot(const char boot_drive[_MAX_DRIVE]) {
 	OpenFileName.hwndOwner = NULL;
 
 	if(DOSBox_Kor())
-		OpenFileName.lpstrFilter = "ÀÌ¹ÌÁö ÆÄÀÏ(*.img, *.ima, *.pcjr, *.jrc)\0*.pcjr;*.img;*.ima;*.jrc\0¸ðµç ÆÄÀÏ(*.*)\0*.*\0";
+		OpenFileName.lpstrFilter = "ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.img, *.ima, *.pcjr, *.jrc)\0*.pcjr;*.img;*.ima;*.jrc\0ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.*)\0*.*\0";
 	else
 		OpenFileName.lpstrFilter = "Image files(*.img, *.ima, *.pcjr, *.jrc)\0*.pcjr;*.img;*.ima;*.jrc\0All files(*.*)\0*.*\0";
 
@@ -2909,7 +2909,7 @@ void OpenFileDialog_Img( char drive ) {
 	OpenFileName.hwndOwner = NULL;
 
 	if(DOSBox_Kor())
-		OpenFileName.lpstrFilter = "ÀÌ¹ÌÁö/ZIP ÆÄÀÏ(*.ima, *.img, *.iso, *.cue, *.bin, *.mdf, *.zip, *.7z, *.vhd)\0*.ima;*.img;*.iso;*.mdf;*.zip;*.cue;*.bin;*.7z;*.vhd\0¸ðµç ÆÄÀÏ(*.*)\0*.*\0";
+		OpenFileName.lpstrFilter = "ï¿½Ì¹ï¿½ï¿½ï¿½/ZIP ï¿½ï¿½ï¿½ï¿½(*.ima, *.img, *.iso, *.cue, *.bin, *.mdf, *.zip, *.7z, *.vhd)\0*.ima;*.img;*.iso;*.mdf;*.zip;*.cue;*.bin;*.7z;*.vhd\0ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.*)\0*.*\0";
 	else
 		OpenFileName.lpstrFilter = "Image/Zip files(*.ima, *.img, *.iso, *.cue, *.bin, *.mdf, *.zip, *.7z, *.vhd)\0*.ima;*.img;*.iso;*.mdf;*.zip;*.cue;*.bin;*.7z;*.vhd\0All files(*.*)\0*.*\0";
 
@@ -2975,7 +2975,7 @@ void D3D_PS(void) {
 	OpenFileName.lStructSize = sizeof( OPENFILENAME );
 	OpenFileName.hwndOwner = NULL;
 	if(DOSBox_Kor())
-		OpenFileName.lpstrFilter = "È¿°ú ÆÄÀÏ(*.fx)\0*.fx\0¸ðµç ÆÄÀÏ(*.*)\0*.*\0";
+		OpenFileName.lpstrFilter = "È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.fx)\0*.fx\0ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.*)\0*.*\0";
 	else
 		OpenFileName.lpstrFilter = "Effect files(*.fx)\0*.fx\0All files(*.*)\0*.*\0";
 	OpenFileName.lpstrCustomFilter = NULL;
@@ -3753,8 +3753,8 @@ int main(int argc, char* argv[]) {
 	if (id==1) menu.compatible=true;
 	if(!menu_compatible) {
 	    if(DOSBox_Kor()) {
-	        LOG_MSG("µµ½º¹Ú½º ´ÙÀ½ Ä«Æä http://cafe.daum.net/dosbox");
-	        LOG_MSG("¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡");
+	        LOG_MSG("ï¿½ï¿½ï¿½ï¿½ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½ http://cafe.daum.net/dosbox");
+	        LOG_MSG("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 	} else
 	LOG_MSG("---");
     }
@@ -3786,7 +3786,7 @@ int main(int argc, char* argv[]) {
              if(!DOSBox_Kor())
                 LOG_MSG("GUI: Press Ctrl-F10 to capture/release mouse.\n     Save your configuration and restart DOSBox if your settings do not take effect.");
             else {
-                LOG_MSG("GUI: ¸¶¿ì½º¸¦ ³ª¿À°Ô ÇÏ°Å³ª µé¾î°¡°Ô ÇÏ·Á¸é Ctrl-F10Å°¸¦ ´©¸£½Ê½Ã¿À.\nÁöÁ¤ÇÑ ¼³Á¤ÀÌ Àû¿ëµÇÁö ¾ÊÀ¸¸é ¼³Á¤À» ÀúÀåÇÏ°í DOSBox¸¦ ´Ù½Ã ½ÃÀÛÇÏ½Ê½Ã¿À.");
+                LOG_MSG("GUI: ï¿½ï¿½ï¿½ì½ºï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï°Å³ï¿½ ï¿½ï¿½î°¡ï¿½ï¿½ ï¿½Ï·ï¿½ï¿½ï¿½ Ctrl-F10Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ê½Ã¿ï¿½.\nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ DOSBoxï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï½Ê½Ã¿ï¿½.");
             }
        }
     } else {

@@ -837,8 +837,8 @@ void DOS_Shell::CMD_COPY(char * args) {
 		dos.dta(save_dta);
 		return;
 	}
-	// Gather all sources (extension to copy more then 1 file specified at commandline)
-	// Concatating files go as follows: All parts except for the last bear the concat flag.
+	// Gather all sources (extension to copy more then 1 file specified at command line)
+	// Concatenating files go as follows: All parts except for the last bear the concat flag.
 	// This construction allows them to be counted (only the non concat set)
 	char* source_p = NULL;
 	char source_x[DOS_PATHLENGTH+CROSS_LEN];
@@ -924,7 +924,7 @@ void DOS_Shell::CMD_COPY(char * args) {
 		char* temp = strstr(pathTarget,"*.*");
 		if(temp && (temp == pathTarget || temp[-1] == '\\')) *temp = 0;//strip off *.* from target
 	
-		// add '\\' if target is a directoy
+		// add '\\' if target is a directory
 		if (pathTarget[strlen(pathTarget)-1]!='\\') {
 			if (DOS_FindFirst(pathTarget,0xffff & ~DOS_ATTR_VOLUME)) {
 				dta.GetResult(name,size,date,time,attr);
@@ -1011,7 +1011,7 @@ void DOS_Shell::CMD_COPY(char * args) {
 					}
 					
 					if (nameTarget[pathTargetLen-1]=='\\') strcat(nameTarget,name);
-					//Don't create a newfile when in concat mode
+					//Don't create a new file when in concat mode
 					if (oldsource.concat || DOS_CreateFile(nameTarget,0,&targetHandle)) {
 						Bit32u dummy=0;
 						//In concat mode. Open the target and seek to the eof

@@ -23,6 +23,7 @@
 #include "mmx.h"
 #include "cpu.h"
 #include "fpu.h"
+#include "../save_state.h"
 
 MMX_reg reg_mmx[8];
 

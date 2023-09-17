@@ -25,6 +25,7 @@
 #include "cpu.h"
 #include "lazyflags.h"
 #include "pic.h"
+#include "../save_state.h"
 
 LazyFlags lflags;
 

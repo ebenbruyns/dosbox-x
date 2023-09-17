@@ -111,6 +111,9 @@ public:
 	//Initialize at a specific sample rate and mode
 	virtual void Init( Bitu rate ) = 0;
 
+	virtual void SaveState( std::ostream& stream ) {}
+	virtual void LoadState( std::istream& stream ) {}
+
 	virtual ~Handler() {
 	}
 };
@@ -127,7 +130,7 @@ class Module: public Module_base {
 	MixerObject mixerObject;
 
 	//Mode we're running in
-	Mode mode;
+	//Mode mode;
 	//Last selected address in the chip for the different modes
 	union {
 		Bit32u normal;
@@ -141,6 +144,7 @@ public:
 	Bit32u lastUsed;				//Ticks when adlib was last used to turn of mixing after a few second
 
 	Handler* handler;				//Handler that will generate the sound
+	Mode mode;
 	RegisterCache cache;
 	Capture* capture;
 	Chip	chip[2];
@@ -149,6 +153,9 @@ public:
 	void PortWrite( Bitu port, Bitu val, Bitu iolen );
 	Bitu PortRead( Bitu port, Bitu iolen );
 	void Init( Mode m );
+
+	virtual void SaveState( std::ostream& stream );
+	virtual void LoadState( std::istream& stream );
 
 	Module( Section* configuration); 
 	~Module();

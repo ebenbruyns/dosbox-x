@@ -388,11 +388,11 @@ public:
 		/* Load a SoundFont */
 		sfont_id = fluid_synth_sfload(synth_soft, conf, 0);
 		if (sfont_id == -1) {
-				LOG_MSG("SYNTH: Failed to load MIDI sound font file \"%s\"",
-				   conf);
-				delete_fluid_synth(synth_soft);
-				delete_fluid_settings(settings);
-				return false;
+			LOG_MSG("SYNTH: Failed to load MIDI sound font file \"%s\"",
+			   conf);
+			delete_fluid_synth(synth_soft);
+			delete_fluid_settings(settings);
+			return false;
 		}
 
 		/* Allocate one event to store the input data */

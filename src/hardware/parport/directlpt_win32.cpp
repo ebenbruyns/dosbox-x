@@ -76,7 +76,7 @@ CDirectLPT::CDirectLPT (Bitu nr, Bit8u initIrq, CommandLine* cmd)
 #if (_WIN64)
 	 hLib = LoadLibrary("inpout64.dll");
 #else
-	 hLib = LoadLibrary("inpout32.dll");
+     hLib = LoadLibrary("inpout32.dll");
 #endif
 
      if (hLib == NULL) {

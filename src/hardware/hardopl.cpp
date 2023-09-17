@@ -86,7 +86,7 @@ void HARDOPL_Init(Bitu hardwareaddr, Bitu blasteraddr, bool isCMSp) {
 #if (_WIN64)
 	 hLib = LoadLibrary("inpoutx64.dll");
 #else
-     hLib = LoadLibrary("inpout32.dll");
+	 hLib = LoadLibrary("inpout32.dll");
 #endif
 
      if (hLib == NULL) {

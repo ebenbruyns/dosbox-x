@@ -240,8 +240,8 @@ class Capture {
 		memset( ToRaw, 0xff, sizeof ( ToRaw ) );
 		//Select the entries that are valid and the index is the mapping to the index entry
 		if (!control->cmdline->FindExist("-vgmlog")) {
-		MakeEntry( 0x01, index );					//0x01: Waveform select
-		MakeEntry( 0x04, index );					//104: Four-Operator Enable
+			MakeEntry( 0x01, index );					//0x01: Waveform select
+			MakeEntry( 0x04, index );					//104: Four-Operator Enable
 		}
 		MakeEntry( 0x05, index );					//105: OPL3 Mode Enable
 		if (control->cmdline->FindExist("-vgmlog")) {
@@ -294,15 +294,15 @@ class Capture {
 		*/
 
 		if (!control->cmdline->FindExist("-vgmlog")) {
-		//Enabling opl3 4op modes will make us go into opl3 mode
-		if ( header.hardware != HW_OPL3 && regFull == 0x104 && val && (*cache)[0x105] ) {
-			header.hardware = HW_OPL3;
-		} 
-		//Writing a keyon to a 2nd address enables dual opl2 otherwise
-		//Maybe also check for rhythm
-		if ( header.hardware == HW_OPL2 && regFull >= 0x1b0 && regFull <=0x1b8 && val ) {
-			header.hardware = HW_DUALOPL2;
-		}
+			//Enabling opl3 4op modes will make us go into opl3 mode
+			if ( header.hardware != HW_OPL3 && regFull == 0x104 && val && (*cache)[0x105] ) {
+				header.hardware = HW_OPL3;
+			} 
+			//Writing a keyon to a 2nd address enables dual opl2 otherwise
+			//Maybe also check for rhythm
+			if ( header.hardware == HW_OPL2 && regFull >= 0x1b0 && regFull <=0x1b8 && val ) {
+				header.hardware = HW_DUALOPL2;
+			}
 		} else {
 			if (mode == MODE_OPL3) {
 				// Valley Bell: OPL3 Mode should be enabled by 0x105 bit 0
@@ -332,19 +332,19 @@ class Capture {
 		Bitu i, val;
 		/* Check the registers to add */
 		if (!control->cmdline->FindExist("-vgmlog")) {
-		for (i=0;i<256;i++) {
-			//Skip the note on entries
-			if (i>=0xb0 && i<=0xb8) 
-				continue;
-			val = (*cache)[ i ];
-			if (val) {
-				AddWrite( i, val );
+			for (i=0;i<256;i++) {
+				//Skip the note on entries
+				if (i>=0xb0 && i<=0xb8) 
+					continue;
+				val = (*cache)[ i ];
+				if (val) {
+					AddWrite( i, val );
+				}
+				val = (*cache)[ 0x100 + i ];
+				if (val) {
+					AddWrite( 0x100 + i, val );
+				}
 			}
-			val = (*cache)[ 0x100 + i ];
-			if (val) {
-				AddWrite( 0x100 + i, val );
-			}
-		}
 		} else {
 			if (mode == MODE_OPL3)
 			{
@@ -417,8 +417,8 @@ public:
 			   in a reg that doesn't do anything with it
 			*/
 			if (!control->cmdline->FindExist("-vgmlog")) {
-			if ( (*cache)[ regFull ] == val )
-				return true;
+				if ( (*cache)[ regFull ] == val )
+					return true;
 			}
 			/* Check how much time has passed */
 			Bitu passed = PIC_Ticks - lastTicks;
@@ -429,10 +429,10 @@ public:
 			
 			// If we passed more than 30 seconds since the last command, we'll restart the the capture
 			if (!control->cmdline->FindExist("-vgmlog")) {
-			if ( passed > 30000 ) {
-				CloseFile();
-				goto skipWrite; 
-			}
+				if ( passed > 30000 ) {
+					CloseFile();
+					goto skipWrite; 
+				}
 			}
 			while (passed > 0) {
 				if (passed < 257) {			//1-256 millisecond delay
@@ -451,14 +451,14 @@ skipWrite:
 		//Not yet capturing to a file here
 		//Check for commands that would start capturing, if it's not one of them return
 		if (!control->cmdline->FindExist("-vgmlog")) {
-		if ( !(
-			//note on in any channel 
-			( regMask>=0xb0 && regMask<=0xb8 && (val&0x020) ) ||
-			//Percussion mode enabled and a note on in any percussion instrument
-			( regMask == 0xbd && ( (val&0x3f) > 0x20 ) )
-		)) {
-			return true;
-		}
+			if ( !(
+				//note on in any channel 
+				( regMask>=0xb0 && regMask<=0xb8 && (val&0x020) ) ||
+				//Percussion mode enabled and a note on in any percussion instrument
+				( regMask == 0xbd && ( (val&0x3f) > 0x20 ) )
+			)) {
+				return true;
+			}
 		} // Valley Bell: I don't want this for serious logging
 	  	handle = OpenCaptureFile("Raw Opl",".dro");
 		if (!handle)
@@ -619,7 +619,7 @@ void Module::DualWrite( Bit8u index, Bit8u reg, Bit8u val ) {
 	}
 	handler->WriteReg(fullReg, val);
 	if (!control->cmdline->FindExist("-vgmlog"))
-	CacheWrite( fullReg, val );
+		CacheWrite( fullReg, val );
 }
 
 

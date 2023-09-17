@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2013  The DOSBox Team
+ *  Copyright (C) 2002-2015  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -2905,7 +2905,7 @@ Bitu vm86_fake_io_offs[3*2]={0};	/* offsets from base off because of dynamic cor
 void init_vm86_fake_io() {
 	Bitu phys = (vm86_fake_io_seg << 4) + vm86_fake_io_off;
 	Bitu wo = 0;
-
+ 
 	if (vm86_fake_io_offs[0] != 0)
 		return;
 
@@ -2914,7 +2914,7 @@ void init_vm86_fake_io() {
 	phys_writeb(phys+wo+0x00,(Bit8u)0xEC);	/* IN AL,DX */
 	phys_writeb(phys+wo+0x01,(Bit8u)0xCB);	/* RETF */
 	wo += 2;
-
+ 
 	vm86_fake_io_offs[1] = vm86_fake_io_off + wo;
 	phys_writeb(phys+wo+0x00,(Bit8u)0xED);	/* IN AX,DX */
 	phys_writeb(phys+wo+0x01,(Bit8u)0xCB);	/* RETF */
@@ -2925,7 +2925,7 @@ void init_vm86_fake_io() {
 	phys_writeb(phys+wo+0x01,(Bit8u)0xED);
 	phys_writeb(phys+wo+0x02,(Bit8u)0xCB);	/* RETF */
 	wo += 3;
-
+ 
 	/* write */
 	vm86_fake_io_offs[3] = vm86_fake_io_off + wo;
 	phys_writeb(phys+wo+0x00,(Bit8u)0xEE);	/* OUT DX,AL */
@@ -2947,7 +2947,7 @@ void init_vm86_fake_io() {
 Bitu CPU_ForceV86FakeIO_In(Bitu port,Bitu len) {
 	static const char suffix[4] = {'B','W','?','D'};
 	Bitu old_ax,old_dx,ret;
-
+ 
 	/* save EAX:EDX and setup DX for IN instruction */
 	old_ax = reg_eax;
 	old_dx = reg_edx;
@@ -2969,26 +2969,26 @@ Bitu CPU_ForceV86FakeIO_In(Bitu port,Bitu len) {
 	/* then restore EAX:EDX */
 	reg_eax = old_ax;
 	reg_edx = old_dx;
-
+ 
 	return ret;
 }
 
 void CPU_ForceV86FakeIO_Out(Bitu port,Bitu val,Bitu len) {
 	static const char suffix[4] = {'B','W','?','D'};
 	Bitu old_ax,old_dx;
-
+ 
 	/* save EAX:EDX and setup DX/AX for OUT instruction */
 	old_ax = reg_eax;
 	old_dx = reg_edx;
 
 	reg_edx = port;
 	reg_eax = val;
-
+ 
 	/* DEBUG */
 	//	fprintf(stderr,"CPU virtual 8086 mode: Forcing CPU to execute 'OUT%c 0x%04x,0x%02x so OS can trap it.\n",suffix[len-1],port,val);
 	/* make the CPU execute that instruction */
 	CALLBACK_RunRealFar(vm86_fake_io_seg,vm86_fake_io_offs[(len==4?2:(len-1))+3]);
-
+ 
 	/* then restore EAX:EDX */
 	reg_eax = old_ax;
 	reg_edx = old_dx;

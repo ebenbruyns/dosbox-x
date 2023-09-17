@@ -2307,6 +2307,7 @@ public:
 			bool imgsizedetect=false;
 			int reserved_cylinders=0;
 			std::string reservecyl;
+			
 			std::string str_size;
 			mediaid=0xF8;
 

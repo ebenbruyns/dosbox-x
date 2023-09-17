@@ -391,8 +391,8 @@ static INLINE Bit8u decode_ADPCM_4_sample(Bit8u sample,Bit8u & reference,Bits& s
 
 static INLINE Bit8u decode_ADPCM_2_sample(Bit8u sample,Bit8u & reference,Bits& scale) {
 	static const Bit8s scaleMap[24] = {
-		0,  1,  0,  -1,  1,  3,  -1,  -3,
-		2,  6, -2,  -6,  4, 12,  -4, -12,
+		0,  1,  0,  -1, 1,  3,  -1,  -3,
+		2,  6, -2,  -6, 4, 12,  -4, -12,
 		8, 24, -8, -24, 16, 48, -16, -48
 	};
 	static const Bit8u adjustMap[24] = {
@@ -1554,7 +1554,7 @@ static void CTMIXER_Reset(void) {
 	_WHICH_[0]=   ((((_VAL_) & 0xf0) >> 3)|(sb.type==SBT_16 ? 1:3));	\
 	_WHICH_[1]=   ((((_VAL_) & 0x0f) << 1)|(sb.type==SBT_16 ? 1:3));	\
 
-#define MAKEPROVOL(_WHICH_)			\
+#define MAKEPROVOL(_WHICH_)											\
 	((((_WHICH_[0] & 0x1e) << 3) | ((_WHICH_[1] & 0x1e) >> 1)) |	\
 		((sb.type==SBT_PRO1 || sb.type==SBT_PRO2) ? 0x11:0))
 

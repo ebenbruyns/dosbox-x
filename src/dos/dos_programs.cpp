@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2013  The DOSBox Team
+ *  Copyright (C) 2002-2015  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -637,7 +637,7 @@ private:
 		strcpy(test,"ems=false");
 		dos_sec->HandleInputline(test);
 		dos_sec->ExecuteInit(false);
-	}
+     }
 
 public:
    
@@ -951,7 +951,7 @@ public:
 
 			/* debug */
 			LOG_MSG("Booting guest OS stack_seg=0x%04x load_seg=0x%04x\n",stack_seg,load_seg);
-
+ 
 			/* standard method */
 			SegSet16(cs, 0);
 			SegSet16(ds, 0);
@@ -2090,7 +2090,7 @@ public:
 		if (cmd->FindString("-u",umount,false)) {
 			umount[0] = toupper(umount[0]);
 			if (isalpha(umount[0])) { /* if it's a drive letter, then traditional usage applies */
-				int i_drive = umount[0]-'A';
+			int i_drive = umount[0]-'A';
 				if (i_drive < DOS_DRIVES && i_drive >= 0 && Drives[i_drive]) {
 					switch (DriveManager::UnmountDrive(i_drive)) {
 					case 0:
@@ -2337,7 +2337,7 @@ public:
 			}
 
 			if (type=="floppy") {
-				mediaid=0xF0;
+				mediaid=0xF0;		
 				ideattach="none";
 			} else if (type=="iso") {
 				str_size=="2048,1,60000,0";	// ignored, see drive_iso.cpp (AllocationInfo)

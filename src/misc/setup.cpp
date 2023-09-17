@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2013  The DOSBox Team
+ *  Copyright (C) 2002-2015  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -239,10 +239,10 @@ bool Property::CheckValue(Value const& in, bool warn){
  * that. --J.C */
 void Property::Set_help(string const& in) {
 	if (use_global_config_str) {
-		string result = string("CONFIG_") + propname;
-		upcase(result);
-		MSG_Add(result.c_str(),in.c_str());
-	}
+	string result = string("CONFIG_") + propname;
+	upcase(result);
+	MSG_Add(result.c_str(),in.c_str());
+}
 	else {
 		help_string = in;
 	}
@@ -250,10 +250,10 @@ void Property::Set_help(string const& in) {
 
 char const* Property::Get_help() {
 	if (use_global_config_str) {
-		string result = string("CONFIG_") + propname;
-		upcase(result);
-		return MSG_Get(result.c_str());
-	}
+	string result = string("CONFIG_") + propname;
+	upcase(result);
+	return MSG_Get(result.c_str());
+}
 
 	return help_string.c_str();
 }
@@ -679,26 +679,26 @@ bool Config::PrintConfig(char const * const configfilename) const {
 				while ((pos = help.find("\n", pos+1)) != std::string::npos) {
 					help.replace(pos, 1, prefix);
 				}
-
+		     
 				std::vector<Value> values = p->GetValues();
 
 				if (help != "" || !values.empty()) {
-					fprintf(outfile, "# %*s: %s", (int)maxwidth, p->propname.c_str(), help.c_str());
+				fprintf(outfile, "# %*s: %s", (int)maxwidth, p->propname.c_str(), help.c_str());
 
-					if (!values.empty()) {
-						fprintf(outfile, "%s%s:", prefix, MSG_Get("CONFIG_SUGGESTED_VALUES"));
-						std::vector<Value>::iterator it = values.begin();
-						while (it != values.end()) {
-							if((*it).ToString() != "%u") { //Hack hack hack. else we need to modify GetValues, but that one is const...
-								if (it != values.begin()) fputs(",", outfile);
-								fprintf(outfile, " %s", (*it).ToString().c_str());
-							}
-							++it;
+				if (!values.empty()) {
+					fprintf(outfile, "%s%s:", prefix, MSG_Get("CONFIG_SUGGESTED_VALUES"));
+					std::vector<Value>::iterator it = values.begin();
+					while (it != values.end()) {
+						if((*it).ToString() != "%u") { //Hack hack hack. else we need to modify GetValues, but that one is const...
+							if (it != values.begin()) fputs(",", outfile);
+							fprintf(outfile, " %s", (*it).ToString().c_str());
 						}
-						fprintf(outfile,".");
+						++it;
 					}
-					fprintf(outfile, "\n");
+					fprintf(outfile,".");
 				}
+			fprintf(outfile, "\n");
+			}
 			}
 		} else {
 			upcase(temp);

@@ -284,7 +284,7 @@ void DOS_Shell::InputCommand(char * line) {
 			size = 0;       // stop the next loop
 			str_len = 0;    // prevent multiple adds of the same line
 			break;
-		case 0x0d:				/* /* Don't care, and return */
+		case 0x0d:				/* Don't care, and return */
 			if(!echo) outc('\n');
 			size=0;			//Kill the while loop
 			break;
@@ -814,7 +814,7 @@ char * DOS_Shell::Which(char * name) {
 	if (!GetEnvStr("PATH",temp)) return 0;
 	const char * pathenv=temp.c_str();
 	if (!pathenv) return 0;
-	pathenv = strchr(pathenv,'=');
+	pathenv=strchr(pathenv,'=');
 	if (!pathenv) return 0;
 	pathenv++;
 	Bitu i_path = 0;

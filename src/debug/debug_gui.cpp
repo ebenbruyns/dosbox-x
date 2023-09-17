@@ -250,7 +250,6 @@ static void LOG_Init(Section * sec) {
 	}
 }
 
-
 void LOG_StartUp(void) {
 	/* Setup logging groups */
 	loggrp[LOG_ALL].front="ALL";

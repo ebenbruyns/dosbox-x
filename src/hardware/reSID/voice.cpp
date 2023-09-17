@@ -133,7 +133,6 @@ void Voice::reset()
 }
 
 
-
 // save state support
 
 void Voice::SaveState( std::ostream& stream )

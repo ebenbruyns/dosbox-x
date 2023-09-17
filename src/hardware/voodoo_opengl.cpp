@@ -32,7 +32,6 @@
 
 #include "voodoo_def.h"
 
-
 SDL_Surface* ogl_surface = NULL;
 
 INT32 cached_line_front_y=-1;

@@ -64,8 +64,8 @@ void SetVal(const std::string secname, std::string preval, const std::string val
 	}
 	Section* sec = control->GetSection(secname);
 	if(sec) {
-		sec->ExecuteDestroy(false);
-		std::string real_val=preval+"="+val;
+	sec->ExecuteDestroy(false);
+        std::string real_val=preval+"="+val;
 		sec->HandleInputline(real_val);
 		sec->ExecuteInit(false);
 	}
@@ -435,7 +435,7 @@ void Mount_Img_Floppy(char drive, std::string realpath) {
 	if (_stati64(temp_line.c_str(), &test)) {
 #else
 	struct stat test;
-	if (stat(temp_line.c_str(), &test)) {
+	if (stat(temp_line.c_str(),&test)) {
 #endif
 		// convert dosbox filename to system filename
 		char fullname[CROSS_LEN];
@@ -552,7 +552,7 @@ void Mount_Img_HDD(char drive, std::string realpath) {
 	if (_stati64(temp_line.c_str(), &test)) {
 #else
 	struct stat test;
-	if (stat(temp_line.c_str(), &test)) {
+	if (stat(temp_line.c_str(),&test)) {
 #endif
 		// convert dosbox filename to system filename
 		char fullname[CROSS_LEN];
@@ -624,7 +624,7 @@ void Mount_Img_HDD(char drive, std::string realpath) {
 			Bitu cylinders=(Bitu)(fcsize/(16*63));	
 			// Int13 only supports up to 1023 cylinders	
 			// For mounting unknown images we could go up with the heads to 255	
-			if ((cylinders*16*63==fcsize)&&(cylinders<1024)) {
+			if ((cylinders*16*63==fcsize)&&(cylinders<1024)) {	
 				yet_detected=true;
 				sizes[0]=512; sizes[1]=63; sizes[2]=16; sizes[3]=cylinders;
 			}	
@@ -744,7 +744,7 @@ void Mount_Img(char drive, std::string realpath) {
 	if (_stati64(temp_line.c_str(), &test)) {
 #else
 	struct stat test;
-	if (stat(temp_line.c_str(), &test)) {
+	if (stat(temp_line.c_str(),&test)) {
 #endif
 		// convert dosbox filename to system filename
 		char fullname[CROSS_LEN];
@@ -809,22 +809,21 @@ void DOSBox_SetMenu(void) {
 	if (glide.enabled)
 		GLIDE_ResetScreen();
 	else {
-		if(menu.startup) {
-			RENDER_CallBack( GFX_CallBackReset );
-		}
+	if(menu.startup) {
+		RENDER_CallBack( GFX_CallBackReset );
 	}
+}
 }
 
 void DOSBox_NoMenu(void) {
-	if(!menu.gui)
-		return;
+	if(!menu.gui) return;
 	menu.toggle=false;
 	SetMenu(GetHWND(), NULL);
 	DrawMenuBar(GetHWND());
 	if (glide.enabled)
 		GLIDE_ResetScreen();
 	else
-		RENDER_CallBack( GFX_CallBackReset );
+	RENDER_CallBack( GFX_CallBackReset );
 }
 
 void DOSBox_CheckOS(int &id, int &major, int &minor) {
@@ -839,26 +838,25 @@ void DOSBox_CheckOS(int &id, int &major, int &minor) {
 }
 
 bool DOSBox_Kor(void) {
-	if(menu.compatible)
-		return false;
-	char Buffer[30];
-	GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SABBREVLANGNAME, Buffer, sizeof(Buffer));
-	return (!strcmp(Buffer,"KOR") ? true : false);
+    if(menu.compatible) return false;
+    char Buffer[30];
+    GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SABBREVLANGNAME, Buffer, sizeof(Buffer));
+    return (!strcmp(Buffer,"KOR") ? true : false);
 }
 
 void DOSBox_RefreshMenu(void) {
-	int width, height; bool fullscreen;
-	void GFX_GetSize(int &width, int &height, bool &fullscreen);
-	GFX_GetSize(width,height,fullscreen);
-	void SDL_Prepare(void);
-	SDL_Prepare();
-	if(!menu.gui) return;
+    int width, height; bool fullscreen;
+    void GFX_GetSize(int &width, int &height, bool &fullscreen);
+    GFX_GetSize(width,height,fullscreen);
+    void SDL_Prepare(void);
+    SDL_Prepare();
+    if(!menu.gui) return;
 
 	if(fullscreen && !glide.enabled) {
-		SetMenu(GetHWND(), NULL);
-		DrawMenuBar(GetHWND());
-		return;
-	}
+    	SetMenu(GetHWND(), NULL);
+    	DrawMenuBar(GetHWND());
+        return;
+    }
 	if(menu.toggle)
 		DOSBox_SetMenu();
 	else
@@ -867,18 +865,18 @@ void DOSBox_RefreshMenu(void) {
 
 void DOSBox_RefreshMenu2(void) {
 	if(!menu.gui) return;
-	int width, height; bool fullscreen;
-	void GFX_GetSize(int &width, int &height, bool &fullscreen);
-	GFX_GetSize(width,height,fullscreen);
-	void SDL_Prepare(void);
-	SDL_Prepare();
-	if(!menu.gui) return;
+   int width, height; bool fullscreen;
+   void GFX_GetSize(int &width, int &height, bool &fullscreen);
+   GFX_GetSize(width,height,fullscreen);
+    void SDL_Prepare(void);
+    SDL_Prepare();
+    if(!menu.gui) return;
 
 	if(fullscreen && !glide.enabled) {
-		SetMenu(GetHWND(), NULL);
-		DrawMenuBar(GetHWND());
-		return;
-	}
+    	SetMenu(GetHWND(), NULL);
+    	DrawMenuBar(GetHWND());
+        return;
+    }
 	if(menu.toggle) {
 		menu.toggle=true;
 		SetMenu(GetHWND(), LoadMenu(GetModuleHandle(NULL),MAKEINTRESOURCE(IDR_MENU)));
@@ -891,11 +889,11 @@ void DOSBox_RefreshMenu2(void) {
 }
 
 void ToggleMenu(bool pressed) {
-	menu.resizeusing=true;
+    menu.resizeusing=true;
 	int width, height; bool fullscreen;
 	void GFX_GetSize(int &width, int &height, bool &fullscreen);
 	GFX_GetSize(width, height, fullscreen);
-	if(!menu.gui || !pressed || fullscreen) return;
+    if(!menu.gui || !pressed || fullscreen) return;
 	if(!menu.toggle) {
 		menu.toggle=true;
 		DOSBox_SetMenu();
@@ -1107,13 +1105,13 @@ int Reflect_Menu(void) {
 	Section_prop * sec = 0;
 	sec = static_cast<Section_prop *>(control->GetSection("cpu"));
 	if(sec) {
-		const std::string cputype = sec->Get_string("cputype");
-		CheckMenuItem(m_handle, ID_CPUTYPE_AUTO, cputype == "auto" ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_CPUTYPE_386, cputype == "386" ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_CPUTYPE_386_PREFETCH, cputype == "386_prefetch" ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_CPUTYPE_486, cputype == "486" ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_CPUTYPE_PENTIUM, cputype == "pentium" ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_CPUTYPE_PENTIUM_MMX, cputype == "pentium_mmx" ? MF_CHECKED : MF_STRING);
+	const std::string cputype = sec->Get_string("cputype");
+	CheckMenuItem(m_handle, ID_CPUTYPE_AUTO, cputype == "auto" ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_CPUTYPE_386, cputype == "386" ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_CPUTYPE_386_PREFETCH, cputype == "386_prefetch" ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_CPUTYPE_486, cputype == "486" ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_CPUTYPE_PENTIUM, cputype == "pentium" ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_CPUTYPE_PENTIUM_MMX, cputype == "pentium_mmx" ? MF_CHECKED : MF_STRING);
 	}
 
 	extern bool ticksLocked;
@@ -1121,18 +1119,18 @@ int Reflect_Menu(void) {
 
 	sec = static_cast<Section_prop *>(control->GetSection("joystick"));
 	if(sec) {
-		const std::string joysticktype = sec->Get_string("joysticktype");
-		CheckMenuItem(m_handle, ID_JOYSTICKTYPE_AUTO, joysticktype == "auto" ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_JOYSTICKTYPE_2AXIS, joysticktype == "2axis" ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_JOYSTICKTYPE_4AXIS, joysticktype == "4axis" ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_JOYSTICKTYPE_4AXIS_2, joysticktype == "4axis_2" ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_JOYSTICKTYPE_FCS, joysticktype == "fcs" ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_JOYSTICKTYPE_CH, joysticktype == "ch" ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_JOYSTICKTYPE_NONE, joysticktype == "none" ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_JOYSTICK_TIMED, sec->Get_bool("timed") ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_JOYSTICK_AUTOFIRE, sec->Get_bool("autofire") ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_JOYSTICK_SWAP34, sec->Get_bool("swap34") ? MF_CHECKED : MF_STRING);
-		CheckMenuItem(m_handle, ID_JOYSTICK_BUTTONWRAP, sec->Get_bool("buttonwrap") ? MF_CHECKED : MF_STRING);
+	const std::string joysticktype = sec->Get_string("joysticktype");
+	CheckMenuItem(m_handle, ID_JOYSTICKTYPE_AUTO, joysticktype == "auto" ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_JOYSTICKTYPE_2AXIS, joysticktype == "2axis" ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_JOYSTICKTYPE_4AXIS, joysticktype == "4axis" ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_JOYSTICKTYPE_4AXIS_2, joysticktype == "4axis_2" ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_JOYSTICKTYPE_FCS, joysticktype == "fcs" ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_JOYSTICKTYPE_CH, joysticktype == "ch" ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_JOYSTICKTYPE_NONE, joysticktype == "none" ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_JOYSTICK_TIMED, sec->Get_bool("timed") ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_JOYSTICK_AUTOFIRE, sec->Get_bool("autofire") ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_JOYSTICK_SWAP34, sec->Get_bool("swap34") ? MF_CHECKED : MF_STRING);
+	CheckMenuItem(m_handle, ID_JOYSTICK_BUTTONWRAP, sec->Get_bool("buttonwrap") ? MF_CHECKED : MF_STRING);
 	}
 
 	CheckMenuItem(m_handle, ID_ASPECT, (render.aspect) ? MF_CHECKED : MF_STRING);

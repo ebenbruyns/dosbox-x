@@ -338,7 +338,7 @@ bool localDrive::GetFileAttr(const char * name,Bit16u * attr) {
 	if (_stati64(newname, &status) == 0) {
 #else
 	struct stat status;
-	if (stat(newname, &status) == 0) {
+	if (stat(newname,&status)==0) {
 #endif
 		*attr=DOS_ATTR_ARCHIVE;
 		if(status.st_mode & S_IFDIR) *attr|=DOS_ATTR_DIRECTORY;
@@ -388,7 +388,7 @@ bool localDrive::TestDir(const char * dir) {
 		if (_stati64(newdir, &test))			return false;
 #else
 		struct stat test;
-		if (stat(newdir, &test))			return false;
+		if (stat(newdir,&test))			return false;
 #endif
 		if ((test.st_mode & S_IFDIR)==0)	return false;
 	};
@@ -432,7 +432,7 @@ bool localDrive::FileExists(const char* name) {
 	if (_stati64(newname, &temp_stat) != 0) return false;
 #else
 	struct stat temp_stat;
-	if (stat(newname, &temp_stat) != 0) return false;
+	if(stat(newname,&temp_stat)!=0) return false;
 #endif
 	if(temp_stat.st_mode & S_IFDIR) return false;
 	return true;
@@ -449,7 +449,7 @@ bool localDrive::FileStat(const char* name, FileStat_Block * const stat_block) {
 	if (_stati64(newname, &temp_stat) != 0) return false;
 #else
 	struct stat temp_stat;
-	if (stat(newname, &temp_stat) != 0) return false;
+	if(stat(newname,&temp_stat)!=0) return false;
 #endif
 	/* Convert the stat to a FileStat */
 	struct tm *time;

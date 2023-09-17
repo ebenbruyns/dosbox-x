@@ -98,7 +98,6 @@ typedef std::vector<CBindGroup *>::iterator CBindGroup_it;
 
 static CBindList holdlist;
 
-
 class CEvent {
 public:
 	CEvent(char const * const _entry) {

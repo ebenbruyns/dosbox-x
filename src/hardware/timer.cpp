@@ -182,8 +182,8 @@ static void counter_latch(Bitu counter) {
 				p->read_latch = (Bit16u)(((unsigned long)(p->cntr-index*(PIT_TICK_RATE/1000.0))) % 10000UL);
 			} else {
 				index = fmod(index,(1000.0/PIT_TICK_RATE)*(double)0x10000);
-			p->read_latch=(Bit16u)(p->cntr-index*(PIT_TICK_RATE/1000.0));
-		}
+				p->read_latch = (Bit16u)(p->cntr-index*(PIT_TICK_RATE/1000.0));
+			}
 		}
 		break;
 	case 1: // countdown

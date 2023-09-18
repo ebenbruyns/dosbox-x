@@ -1,5 +1,5 @@
 dnl Init.
-CXXFLAGS="-Werror=date-time --build-id=none -std=c++11 -fpermissive -I/app/include/SDL -ltbb"
+CXXFLAGS="-Werror=date-time -std=c++11 -fpermissive -I/app/include/SDL -ltbb"
 AC_INIT(dosbox,SVN-Daum)
 AC_PREREQ(2.50)
 AC_CONFIG_SRCDIR(README)

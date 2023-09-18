@@ -2324,7 +2324,7 @@ void OpenFileDialog( char * path_arg ) {
 	OpenFileName.lStructSize = sizeof( OPENFILENAME );
 	OpenFileName.hwndOwner = NULL;
 	if(DOSBox_Kor())
-		OpenFileName.lpstrFilter = "½ÇÇà ÆÄÀÏ(*.com, *.exe, *.bat)\0*.com;*.exe;*.bat\0¸ðµç ÆÄÀÏ(*.*)\0*.*\0";
+		OpenFileName.lpstrFilter = "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.com, *.exe, *.bat)\0*.com;*.exe;*.bat\0ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.*)\0*.*\0";
 	else
 		OpenFileName.lpstrFilter = "Executable files(*.com, *.exe, *.bat)\0*.com;*.exe;*.bat\0All files(*.*)\0*.*\0";
 	OpenFileName.lpstrCustomFilter = NULL;
@@ -2441,7 +2441,7 @@ void Go_Boot(const char boot_drive[_MAX_DRIVE]) {
 	OpenFileName.hwndOwner = NULL;
 
 	if(DOSBox_Kor())
-		OpenFileName.lpstrFilter = "ÀÌ¹ÌÁö ÆÄÀÏ(*.img, *.ima, *.pcjr, *.jrc)\0*.pcjr;*.img;*.ima;*.jrc\0¸ðµç ÆÄÀÏ(*.*)\0*.*\0";
+		OpenFileName.lpstrFilter = "ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.img, *.ima, *.pcjr, *.jrc)\0*.pcjr;*.img;*.ima;*.jrc\0ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.*)\0*.*\0";
 	else
 		OpenFileName.lpstrFilter = "Image files(*.img, *.ima, *.pcjr, *.jrc)\0*.pcjr;*.img;*.ima;*.jrc\0All files(*.*)\0*.*\0";
 
@@ -2612,7 +2612,7 @@ void OpenFileDialog_Img( char drive ) {
 	OpenFileName.hwndOwner = NULL;
 
 	if(DOSBox_Kor())
-		OpenFileName.lpstrFilter = "ÀÌ¹ÌÁö/ZIP ÆÄÀÏ(*.ima, *.img, *.iso, *.cue, *.bin, *.mdf, *.zip, *.7z)\0*.ima;*.img;*.iso;*.mdf;*.zip;*.cue;*.bin;*.7z\0¸ðµç ÆÄÀÏ(*.*)\0*.*\0";
+		OpenFileName.lpstrFilter = "ï¿½Ì¹ï¿½ï¿½ï¿½/ZIP ï¿½ï¿½ï¿½ï¿½(*.ima, *.img, *.iso, *.cue, *.bin, *.mdf, *.zip, *.7z)\0*.ima;*.img;*.iso;*.mdf;*.zip;*.cue;*.bin;*.7z\0ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.*)\0*.*\0";
 	else
 		OpenFileName.lpstrFilter = "Image/Zip files(*.ima, *.img, *.iso, *.cue, *.bin, *.mdf, *.zip, *.7z)\0*.ima;*.img;*.iso;*.mdf;*.zip;*.cue;*.bin;*.7z\0All files(*.*)\0*.*\0";
 
@@ -2675,7 +2675,7 @@ void D3D_PS(void) {
 	OpenFileName.lStructSize = sizeof( OPENFILENAME );
 	OpenFileName.hwndOwner = NULL;
 	if(DOSBox_Kor())
-		OpenFileName.lpstrFilter = "È¿°ú ÆÄÀÏ(*.fx)\0*.fx\0¸ðµç ÆÄÀÏ(*.*)\0*.*\0";
+		OpenFileName.lpstrFilter = "È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.fx)\0*.fx\0ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(*.*)\0*.*\0";
 	else
 		OpenFileName.lpstrFilter = "Effect files(*.fx)\0*.fx\0All files(*.*)\0*.*\0";
 	OpenFileName.lpstrCustomFilter = NULL;

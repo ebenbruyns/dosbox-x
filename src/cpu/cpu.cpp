@@ -153,6 +153,7 @@ void CPU_Core_Dyn_X86_Cache_Reset(void);
 void CPU_Core_Dynrec_Init(void);
 void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 void CPU_Core_Dynrec_Cache_Close(void);
+void CPU_Core_Dyn_X86_SaveDHFPUState(void);
 #endif
 
 /* called to signal an NMI. */

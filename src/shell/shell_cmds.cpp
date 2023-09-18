@@ -507,7 +507,7 @@ void DOS_Shell::CMD_EXIT(char * args) {
 void DOS_Shell::CMD_CHDIR(char * args) {
 	HELP("CHDIR");
 	StripSpaces(args);
-	if (!*args) {
+	Bit8u drive = DOS_GetDefaultDrive()+'A';
 	char dir[DOS_PATHLENGTH];
 	if (!*args) {
 		DOS_GetCurrentDir(0,dir);
@@ -550,7 +550,7 @@ void DOS_Shell::CMD_CHDIR(char * args) {
 			temps += "~1";
 			WriteOut(MSG_Get("SHELL_CMD_CHDIR_HINT_2"),temps.insert(0,slashpart).c_str());
 		} else {
-			Bit8u drive=DOS_GetDefaultDrive()+'A';
+			if (drive == 'Z') {
 				WriteOut(MSG_Get("SHELL_CMD_CHDIR_HINT_3"));
 			} else {
 				WriteOut(MSG_Get("SHELL_CMD_CHDIR_ERROR"),args);

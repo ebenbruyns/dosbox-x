@@ -101,6 +101,8 @@ void setFPU(Bit16u tag) {
 	FPU_SetTag(tag);
 }
 
+<<<<<<< HEAD
+=======
 
 
 // save state support
@@ -156,3 +158,4 @@ struct MMX_reg reg_mmx[8];
 			Bit8s b0,b1,b2,b3,b4,b5,b6,b7;
 		} sb;
 */
+>>>>>>> 1a1b0bf... Things always fall through the cracks, these are those, Also recovering the changes I made to get it to build, will apply those in their own patch

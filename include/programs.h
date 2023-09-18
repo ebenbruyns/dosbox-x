@@ -41,13 +41,6 @@ class CommandLine {
 public:
 	CommandLine(int argc,char const * const argv[]);
 	CommandLine(char const * const name,char const * const cmdline);
-		gnu,		// GNU style --switches or -switches, switch parsing stops at --
-		gnu_getopt,	// GNU style --long or -a -b -c -d or -abcd (short as single char), switch parsing stops at --
-		either		// both dos and gnu, switch parsing stops at --
-	};
-public:
-	CommandLine(int argc,char const * const argv[],enum opt_style opt=CommandLine::either);
-	CommandLine(char const * const name,char const * const cmdline,enum opt_style opt=CommandLine::either);
 	const char * GetFileName(){ return file_name.c_str();}
 
 	bool FindExist(char const * const name,bool remove=false);
@@ -57,6 +50,13 @@ public:
 	bool FindCommand(unsigned int which,std::string & value);
 	bool FindStringBegin(char const * const begin,std::string & value, bool remove=false);
 	bool FindStringRemain(char const * const name,std::string & value);
+	bool FindStringRemainBegin(char const * const name,std::string & value);
+	bool GetStringRemain(std::string & value);
+	int GetParameterFromList(const char* const params[], std::vector<std::string> & output);
+	void FillVector(std::vector<std::string> & vector);
+	unsigned int GetCount(void);
+	void Shift(unsigned int amount=1);
+	Bit16u Get_arglength();
 
 private:
 	typedef std::list<std::string>::iterator cmd_it;

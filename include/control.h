@@ -69,23 +69,17 @@ public:
 		startup_params.push_back(cmdline->GetFileName());
 		cmdline->FillVector(startup_params);
 		initialised=false;
-		opt_nomenu = false;
-		opt_startui = false;
-		initialised = false;
-		opt_userconf = false;
-		opt_noconsole = false;
-		opt_eraseconf = false;
-		opt_resetconf = false;
-		opt_printconf = false;
-		opt_fullscreen = false;
+	}
+	~Config();
 
-	void SetStartUp(void (*_function)(void));
+	Section_line * AddSection_line(char const * const _name,void (*_initfunction)(Section*));
 	Section_prop * AddSection_prop(char const * const _name,void (*_initfunction)(Section*),bool canchange=false);
 	
 	Section* GetSection(int index);
 	Section* GetSection(std::string const&_sectionname) const;
 	Section* GetSectionFromProperty(char const * const prop) const;
 
+	void SetStartUp(void (*_function)(void));
 	void Init();
 	void ShutDown();
 	void StartUp();

@@ -1188,6 +1188,8 @@ void DestroyConditionFlags(void) {
 
 #endif
 
+<<<<<<< HEAD
+=======
 
 
 // save state support
@@ -1225,3 +1227,4 @@ struct LazyFlags lflags;
 	Bitu prev_type;
 	Bitu oldcf;
 */
+>>>>>>> 1a1b0bf... Things always fall through the cracks, these are those, Also recovering the changes I made to get it to build, will apply those in their own patch

@@ -29,7 +29,6 @@
 #ifndef DOSBOX_BIOS_H
 #include "bios.h"
 #endif
-#include <cstdlib>
 
 /* The Section handling Bios Disk Access */
 #define BIOS_MAX_DISK 10

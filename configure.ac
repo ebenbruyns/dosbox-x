@@ -1,4 +1,5 @@
 dnl Init.
+CXXFLAGS="-Werror=date-time -std=c++11 -fpermissive -I/app/include/SDL -ltbb"
 AC_INIT(dosbox,SVN-Daum)
 AC_PREREQ(2.50)
 AC_CONFIG_SRCDIR(README)
@@ -35,6 +36,7 @@ AM_PATH_SDL($SDL_VERSION,
 )
 LIBS="$LIBS $SDL_LIBS"
 CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
+CXXFLAGS="-std=c++11 -fpermissive -I/app/include/SDL -ltbb $CXXFLAGS"
 
 dnl Check if SDL is 1.2.x (1.3 not supported)
 AC_MSG_CHECKING([SDL version only being 1.2.X])

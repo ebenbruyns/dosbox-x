@@ -22,7 +22,9 @@
 #include "bios_disk.h"
 #include "../src/dos/cdrom.h"
 
-#ifdef _MSC_VER
+
+//this is an ugly hack, since I'm only building in flatpaks for now it's ok, but dragons be here for windows builds
+#ifndef _MSC_VER
 # define MIN(a,b) ((a) < (b) ? (a) : (b))
 #else
 # define MIN(a,b) std::min(a,b)

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2013  The DOSBox Team
+ *  Copyright (C) 2002-2015  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -391,8 +391,8 @@ static INLINE Bit8u decode_ADPCM_4_sample(Bit8u sample,Bit8u & reference,Bits& s
 
 static INLINE Bit8u decode_ADPCM_2_sample(Bit8u sample,Bit8u & reference,Bits& scale) {
 	static const Bit8s scaleMap[24] = {
-		0,  1,  0,  -1,  1,  3,  -1,  -3,
-		2,  6, -2,  -6,  4, 12,  -4, -12,
+		0,  1,  0,  -1, 1,  3,  -1,  -3,
+		2,  6, -2,  -6, 4, 12,  -4, -12,
 		8, 24, -8, -24, 16, 48, -16, -48
 	};
 	static const Bit8u adjustMap[24] = {
@@ -1554,7 +1554,7 @@ static void CTMIXER_Reset(void) {
 	_WHICH_[0]=   ((((_VAL_) & 0xf0) >> 3)|(sb.type==SBT_16 ? 1:3));	\
 	_WHICH_[1]=   ((((_VAL_) & 0x0f) << 1)|(sb.type==SBT_16 ? 1:3));	\
 
-#define MAKEPROVOL(_WHICH_)			\
+#define MAKEPROVOL(_WHICH_)											\
 	((((_WHICH_[0] & 0x1e) << 3) | ((_WHICH_[1] & 0x1e) >> 1)) |	\
 		((sb.type==SBT_PRO1 || sb.type==SBT_PRO2) ? 0x11:0))
 
@@ -1692,24 +1692,24 @@ static void CTMIXER_Write(Bit8u val) {
 		break;
 	case 0x80:		/* IRQ Select */
 		if (sb.type==SBT_16 && !sb.vibra) { /* ViBRA PnP cards do not allow reconfiguration by this byte */
-			sb.hw.irq=0xff;
-			if (val & 0x1) sb.hw.irq=2;
-			else if (val & 0x2) sb.hw.irq=5;
-			else if (val & 0x4) sb.hw.irq=7;
-			else if (val & 0x8) sb.hw.irq=10;
+		sb.hw.irq=0xff;
+		if (val & 0x1) sb.hw.irq=2;
+		else if (val & 0x2) sb.hw.irq=5;
+		else if (val & 0x4) sb.hw.irq=7;
+		else if (val & 0x8) sb.hw.irq=10;
 		}
 		break;
 	case 0x81:		/* DMA Select */
 		if (sb.type==SBT_16 && !sb.vibra) { /* ViBRA PnP cards do not allow reconfiguration by this byte */
-			sb.hw.dma8=0xff;
-			sb.hw.dma16=0xff;
-			if (val & 0x1) sb.hw.dma8=0;
-			else if (val & 0x2) sb.hw.dma8=1;
-			else if (val & 0x8) sb.hw.dma8=3;
-			if (val & 0x20) sb.hw.dma16=5;
-			else if (val & 0x40) sb.hw.dma16=6;
-			else if (val & 0x80) sb.hw.dma16=7;
-			LOG(LOG_SB,LOG_NORMAL)("Mixer select dma8:%x dma16:%x",sb.hw.dma8,sb.hw.dma16);
+		sb.hw.dma8=0xff;
+		sb.hw.dma16=0xff;
+		if (val & 0x1) sb.hw.dma8=0;
+		else if (val & 0x2) sb.hw.dma8=1;
+		else if (val & 0x8) sb.hw.dma8=3;
+		if (val & 0x20) sb.hw.dma16=5;
+		else if (val & 0x40) sb.hw.dma16=6;
+		else if (val & 0x80) sb.hw.dma16=7;
+		LOG(LOG_SB,LOG_NORMAL)("Mixer select dma8:%x dma16:%x",sb.hw.dma8,sb.hw.dma16);
 		}
 		break;
 	default:
@@ -1972,11 +1972,11 @@ static void SBLASTER_CallBack(Bitu len) {
 			}
 		}
 		else {
-			len*=sb.dma.mul;
-			if (len&SB_SH_MASK) len+=1 << SB_SH;
-			len>>=SB_SH;
-			if (len>sb.dma.left) len=sb.dma.left;
-			GenerateDMASound(len);
+		len*=sb.dma.mul;
+		if (len&SB_SH_MASK) len+=1 << SB_SH;
+		len>>=SB_SH;
+		if (len>sb.dma.left) len=sb.dma.left;
+		GenerateDMASound(len);
 		}
 		break;
 	}
@@ -2160,7 +2160,7 @@ private:
 				LOG(LOG_SB,LOG_WARN)("Sound Blaster 16 enabled on a system without 16-bit DMA. Don't expect this setup to work properly! To improve compatability please edit your dosbox.conf and change sbtype to sbpro2 instead, or else enable the secondary DMA controller.");
 			}
 		}
-
+			
 		/* SB16 Vibra cards are Plug & Play */
 		if (!strcasecmp(sbtype,"sb16vibra")) {
 			ISA_PNP_devreg(new ViBRA_PnP());
